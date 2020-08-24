@@ -7310,11 +7310,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\will\\MainFiles\\MyProjects2020\\AllAboutSplinesCurvesAndNurbs(DX)\\AllAboutSplinesCurvesAndNurbs(DX).csproj",
+      "projectUniqueName": "C:\\Users\\will\\MainFiles\\GitPrjs\\AllAboutSplinesCurvesAndNurbs(DX)\\AllAboutSplinesCurvesAndNurbs(DX).csproj",
       "projectName": "AllAboutSplinesCurvesAndNurbs(DX)",
-      "projectPath": "C:\\Users\\will\\MainFiles\\MyProjects2020\\AllAboutSplinesCurvesAndNurbs(DX)\\AllAboutSplinesCurvesAndNurbs(DX).csproj",
+      "projectPath": "C:\\Users\\will\\MainFiles\\GitPrjs\\AllAboutSplinesCurvesAndNurbs(DX)\\AllAboutSplinesCurvesAndNurbs(DX).csproj",
       "packagesPath": "C:\\Users\\will\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\will\\MainFiles\\MyProjects2020\\AllAboutSplinesCurvesAndNurbs(DX)\\obj\\",
+      "outputPath": "C:\\Users\\will\\MainFiles\\GitPrjs\\AllAboutSplinesCurvesAndNurbs(DX)\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

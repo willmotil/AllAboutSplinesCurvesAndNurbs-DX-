@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UZ3JyOSljm09qIi0bj98xhiZRrwx1rHISS+g5LNUhKgk2+WQUWu7u3cbK41npkW+4HgEH7LcmcL23dblKBogyA==",
+  "dgSpecHash": "3mDnlQRMzU6TFt4etfuj9cdRzFdXZ3WRBczPHegsU3ljcA+wRYxAYZecZDesPfqWOvH9brBw3u9F3NNWiquMbg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\will\\MainFiles\\MyProjects2020\\AllAboutSplinesCurvesAndNurbs(DX)\\AllAboutSplinesCurvesAndNurbs(DX).csproj",
+  "projectFilePath": "C:\\Users\\will\\MainFiles\\GitPrjs\\AllAboutSplinesCurvesAndNurbs(DX)\\AllAboutSplinesCurvesAndNurbs(DX).csproj",
   "expectedPackageFiles": [
     "C:\\Users\\will\\.nuget\\packages\\libuv\\1.9.1\\libuv.1.9.1.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\1.1.0\\microsoft.codeanalysis.analyzers.1.1.0.nupkg.sha512",

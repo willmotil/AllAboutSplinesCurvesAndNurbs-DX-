@@ -147,9 +147,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
             DrawPrimitiveGeometry(gameTime);
 
-            DrawBsplineWithSpriteBatche(gameTime);
-
             DrawCameraSceneAndCameraMotionPathWithSpriteBatch(gameTime);
+
+            //DrawBsplineWithSpriteBatche(gameTime);
 
             base.Draw(gameTime);
         }
@@ -201,9 +201,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             DrawHelpers.DrawRectangleOutline(r3, 1, Color.Gray);
             DrawHelpers.DrawRectangleOutline(r4, 1, Color.Gray);
 
-            _spriteBatch.DrawString(_font, msg, new Vector2(10, 20), Color.White);
-
             _camera.DrawCurveThruWayPointsWithSpriteBatch(gameTime);
+
+            _spriteBatch.DrawString(_font, msg, new Vector2(10, 20), Color.White);
 
             _spriteBatch.End();
         }
