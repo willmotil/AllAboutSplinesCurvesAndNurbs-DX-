@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
-    public class Game1 : Game
+    public class Game_ImbalancedCurveWayPointCamera : Game
     {
         private GraphicsDeviceManager _graphics;
         public static Texture2D _generatedTexture;
@@ -25,31 +25,27 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         #region camera variables.
 
-        DemoCamera _camera;
+        WaypointCamera _camera;
         bool _useDemoWaypoints = true;
         static Vector3 _testTarget = new Vector3(350, 300, -25);
 
         static Vector3 _wpOffset = new Vector3(350, 240, -25);
+
         Vector3[] _wayPoints = new Vector3[]
         {
-            new Vector3(-180, 10, -5) + _wpOffset, new Vector3(-150, 120, -5) + _wpOffset, new Vector3(-120, 30, -5) + _wpOffset, new Vector3(-90, 120, -5) + _wpOffset, new Vector3(-60, 120, -5) + _wpOffset, new Vector3(-30, 120, -5) + _wpOffset, 
-            new Vector3(0, 200, -5) + _wpOffset, new Vector3(30, 120, -5) + _wpOffset, new Vector3(60, 30, -5) + _wpOffset, new Vector3(90, 120, -5) + _wpOffset, new Vector3(120, 120, -5) + _wpOffset, new Vector3(150, 120, -5) + _wpOffset, 
-            new Vector3(180, 10, -5) + _wpOffset
+            new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
         };
+
         //Vector3[] _wayPoints = new Vector3[]
         //{
-        //    new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
-        //};
-        //Vector3[] _wayPoints = new Vector3[]
-        //{
-        //    new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
-        //    new Vector3(250, 50, -5) + _wpOffset, new Vector3(250, -50, -5) + _wpOffset, new Vector3(-200, -200, -200) + _wpOffset, new Vector3(-150, 150, -5) + _wpOffset,
-        //     new Vector3(50, 160, -5) + _wpOffset
+        //    new Vector3(-180, 10, -5) + _wpOffset, new Vector3(-150, 120, -5) + _wpOffset, new Vector3(-120, 30, -5) + _wpOffset, new Vector3(-90, 120, -5) + _wpOffset, new Vector3(-60, 120, -5) + _wpOffset, new Vector3(-30, 120, -5) + _wpOffset, 
+        //    new Vector3(0, 200, -5) + _wpOffset, new Vector3(30, 120, -5) + _wpOffset, new Vector3(60, 30, -5) + _wpOffset, new Vector3(90, 120, -5) + _wpOffset, new Vector3(120, 120, -5) + _wpOffset, new Vector3(150, 120, -5) + _wpOffset, 
+        //    new Vector3(180, 10, -5) + _wpOffset
         //};
 
         #endregion
 
-        public Game1()
+        public Game_ImbalancedCurveWayPointCamera()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -75,7 +71,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _generatedTexture = CreateCheckerBoard(GraphicsDevice, 20,20, Color.White, Color.Red);
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
 
-            _camera = new DemoCamera(GraphicsDevice, _spriteBatch, _dot, new Vector3(2, 2, 10), new Vector3(0, 0, 0), Vector3.UnitY, 0.1f, 10000f, 1f, true, false);
+            _camera = new WaypointCamera(GraphicsDevice, _spriteBatch, _dot, new Vector3(2, 2, 10), new Vector3(0, 0, 0), Vector3.UnitY, 0.1f, 10000f, 1f, true, false);
             _camera.TransformCamera(_camera.World.Translation, _testTarget, _camera.World.Up);
             _camera.Up = Vector3.Forward;
             _camera.WayPointCycleDurationInTotalSeconds = 20f;

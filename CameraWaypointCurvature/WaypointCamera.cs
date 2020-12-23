@@ -9,7 +9,7 @@ namespace Microsoft.Xna.Framework
     // I should later fix this up later to just take a set of waypoints and allow for the camera to generate a new uniformed set from them. 
     // To allow for the motion to be proportioned smoothly, that may not always be desired though.
 
-    public class DemoCamera
+    public class WaypointCamera
     {
         Vector3 _camPos = Vector3.Zero;
         Vector3 _targetLookAtPos = Vector3.One;
@@ -25,7 +25,7 @@ namespace Microsoft.Xna.Framework
         float _durationInSeconds = 1f;
 
         private Vector3[] wayPointReference;
-        MyImbalancedSpline wayPointCurvature;
+        CurveMyImbalancedSpline wayPointCurvature;
 
         public Matrix Projection { get { return _projection; } set { _projection = value; } }
         public Matrix View { get { return Matrix.Invert(_camera); } }
@@ -47,10 +47,10 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// This is a cinematic styled fixed camera it uses way points to traverse thru the world.
         /// </summary>
-        public DemoCamera(GraphicsDevice device, SpriteBatch spriteBatch, Texture2D dot, Vector3 pos, Vector3 target, Vector3 up, float nearClipPlane, float farClipPlane, float fieldOfView, bool perspective, bool inverseProjection)
+        public WaypointCamera(GraphicsDevice device, SpriteBatch spriteBatch, Texture2D dot, Vector3 pos, Vector3 target, Vector3 up, float nearClipPlane, float farClipPlane, float fieldOfView, bool perspective, bool inverseProjection)
         {
             DrawHelpers.Initialize(spriteBatch, dot);
-            wayPointCurvature = new MyImbalancedSpline();
+            wayPointCurvature = new CurveMyImbalancedSpline();
             TransformCamera(pos, target, up);
             SetProjection(device, nearClipPlane, farClipPlane, fieldOfView, perspective, inverseProjection);
         }

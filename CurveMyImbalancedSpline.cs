@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework
 {
-    public class MyImbalancedSpline
+    public class CurveMyImbalancedSpline
     {
         int order = 2;
         int curveSegmentsEndIndex = 0;

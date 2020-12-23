@@ -72,8 +72,8 @@ C:\Users\will\MainFiles\MyProjects2020\AllAboutSplinesCurvesAndNurbs(DX)\obj\Deb
 C:\Users\will\MainFiles\MyProjects2020\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).pdb
 C:\Users\will\MainFiles\MyProjects2020\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).genruntimeconfig.cache
 C:\Users\will\MainFiles\MyProjects2020\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).csprojAssemblyReference.cache
-C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\bin\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).exe
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\bin\Debug\netcoreapp3.1\Content\MgGenFont.xnb
+C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\bin\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).exe
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\bin\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).deps.json
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\bin\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).runtimeconfig.json
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\bin\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).runtimeconfig.dev.json
@@ -108,4 +108,3 @@ C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netc
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).dll
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).pdb
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).genruntimeconfig.cache
-C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).csprojAssemblyReference.cache
