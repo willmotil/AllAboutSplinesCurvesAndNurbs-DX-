@@ -167,31 +167,31 @@ namespace Microsoft.Xna.Framework
             return finalPlot;
         }
 
-        Vector4 CalculateProportionalArtificialSplinePoint(Vector4 A, Vector4 B, Vector4 C)
-        {
-            return (((B - C) + B) + ((B - A) + B)) * .5f;
-        }
+        //Vector4 CalculateProportionalArtificialSplinePoint(Vector4 A, Vector4 B, Vector4 C)
+        //{
+        //    return (((B - C) + B) + ((B - A) + B)) * .5f;
+        //}
 
-        // testing method
-        Vector4 CalculateNormalizedArtificialSplinePoint(Vector4 A, Vector4 B, Vector4 C)
-        {
-            Vector3 p0 = new Vector3(A.X, A.Y, A.Z);
-            Vector3 p1 = new Vector3(B.X, B.Y, B.Z);
-            Vector3 p2 = new Vector3(C.X, C.Y, C.Z);
-            //
-            Vector3 invtemp0 = (p1 - p2);// + p1;
-            Vector3 invtemp2 = (p1 - p0);// + p1;
-            float invdist0 = invtemp0.Length();
-            float invdist2 = invtemp2.Length();
-            float avgdist = (invdist0 + invdist2) * .5f;
-            invtemp0.Normalize();
-            invtemp2.Normalize();
-            //
-            invtemp0 = invtemp0 * (avgdist);
-            invtemp2 = invtemp2 * (avgdist);
-            Vector3 g = (invtemp0 + invtemp2) * .5f + p1;
-            return new Vector4(g.X, g.Y, g.Z, B.W);
-        }
+        //// testing method
+        //Vector4 CalculateNormalizedArtificialSplinePoint(Vector4 A, Vector4 B, Vector4 C)
+        //{
+        //    Vector3 p0 = new Vector3(A.X, A.Y, A.Z);
+        //    Vector3 p1 = new Vector3(B.X, B.Y, B.Z);
+        //    Vector3 p2 = new Vector3(C.X, C.Y, C.Z);
+        //    //
+        //    Vector3 invtemp0 = (p1 - p2);// + p1;
+        //    Vector3 invtemp2 = (p1 - p0);// + p1;
+        //    float invdist0 = invtemp0.Length();
+        //    float invdist2 = invtemp2.Length();
+        //    float avgdist = (invdist0 + invdist2) * .5f;
+        //    invtemp0.Normalize();
+        //    invtemp2.Normalize();
+        //    //
+        //    invtemp0 = invtemp0 * (avgdist);
+        //    invtemp2 = invtemp2 * (avgdist);
+        //    Vector3 g = (invtemp0 + invtemp2) * .5f + p1;
+        //    return new Vector4(g.X, g.Y, g.Z, B.W);
+        //}
 
         float Interpolate(float v0, float v1, float timeX)
         {

@@ -22,7 +22,6 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
         public static Texture2D _dot;
-
         MouseState ms;
 
         #region camera variables.
@@ -31,10 +30,12 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         bool _useDemoWaypoints = true;
         static Vector3 _testTarget = new Vector3(350, 300, -25);
 
-        static Vector3 _wpOffset = new Vector3(350, 240, -25);
+        #endregion
+
+        static Vector3 _wpOffset = new Vector3(350, 240, +5);
         Vector3[] _wayPoints = new Vector3[]
         {
-            new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
+            new Vector3(80, 80, -5) + _wpOffset, new Vector3(80, -80, -5) + _wpOffset, new Vector3(-80, -80, -5) + _wpOffset, new Vector3(-80, 80, -5) + _wpOffset,
         };
 
         CurveHermiteSpline cspline;
@@ -48,7 +49,6 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
               $" " + "\n"
               ;
 
-        #endregion
 
         public Game_HermiteSplines()
         {
@@ -107,22 +107,6 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     t = 1f;
             }
 
-            if (IsPressedWithDelay(Keys.Up, gameTime))
-            {
-                weight += .1f;
-                if (weight > 2f)
-                    weight = 0f;
-                cspline = new CurveHermiteSpline(_wayPoints, true, weight);
-            }
-
-            if (IsPressedWithDelay(Keys.Down, gameTime))
-            {
-                weight -= .1f;
-                if (weight < -1f)
-                    weight = 2f;
-                cspline = new CurveHermiteSpline(_wayPoints, true, weight);
-            }
-
             if (IsPressedWithDelay(Keys.Tab, gameTime))
             {
                 selectedCp += 1;
@@ -130,10 +114,33 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     selectedCp = 0;
             }
 
+            bool redoCurve = false;
+
+            if (IsPressedWithDelay(Keys.Up, gameTime))
+            {
+                weight += .1f;
+                if (weight > 2f)
+                    weight = 0f;
+                redoCurve = true;
+            }
+
+            if (IsPressedWithDelay(Keys.Down, gameTime))
+            {
+                weight -= .1f;
+                if (weight < -1f)
+                    weight = 2f;
+                redoCurve = true;
+            }
+
             ms = Mouse.GetState();
             if (ms.LeftButton == ButtonState.Pressed)
             {
                 _wayPoints[selectedCp] = new Vector3(ms.Position.X, ms.Position.Y, 0);
+                redoCurve = true;
+            }
+
+            if (redoCurve)
+            {
                 cspline = new CurveHermiteSpline(_wayPoints, true, weight);
             }
 

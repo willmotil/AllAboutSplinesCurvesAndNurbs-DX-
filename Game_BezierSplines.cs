@@ -17,8 +17,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
-        public Texture2D _dot;
-
+        public static Texture2D _dot;
         MouseState ms;
 
         #region camera variables.
@@ -29,22 +28,27 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         #endregion
 
-        static Vector3 _wpOffset = new Vector3(350, 240, -25);
+        static Vector3 _wpOffset = new Vector3(350, 240, +5);
         Vector3[] _wayPoints = new Vector3[]
         {
-            new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
+            new Vector3(80, 80, -5) + _wpOffset, new Vector3(80, -80, -5) + _wpOffset, new Vector3(-80, -80, -5) + _wpOffset, new Vector3(-80, 80, -5) + _wpOffset,
         };
+
+        //Vector3[] _wayPoints = new Vector3[]
+        //{
+        //    new Vector3(80, 0, -5) + _wpOffset, new Vector3(0, -80, -5) + _wpOffset, new Vector3(-80, 0, -5) + _wpOffset, new Vector3(0, 80, -5) + _wpOffset,
+        //};
 
         CurveBezierSpline cspline;
 
         int numOfPoints = 40;
         float weight = 0f;
+        int selectedCp = 0;
 
         string msg =
               $" " + "\n" +
               $" " + "\n"
               ;
-
 
 
         public Game_BezierSplines()
@@ -62,8 +66,6 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
 
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -80,19 +82,17 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _camera.MovementSpeedPerSecond = 3f;
             _camera.SetWayPoints(_wayPoints, true, 100);
 
-            //cspline = new CatMullSpline(_wayPoints);
             cspline = new CurveBezierSpline(_wayPoints, true, 0.5f);
         }
 
 
         float t = 0f;
-
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.R))
+            if (IsPressedWithDelay(Keys.R, gameTime))
             {
                 var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 t += elapsed / 10f;
@@ -100,7 +100,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     t = 0;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.T))
+            if (IsPressedWithDelay(Keys.T, gameTime))
             {
                 var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 t -= elapsed / 10f;
@@ -108,22 +108,48 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     t = 1f;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            if (IsPressedWithDelay(Keys.Tab, gameTime))
             {
-                weight += .01f;
-                if (weight > 2f)
-                    weight = 0f;
-                cspline = new CurveBezierSpline(_wayPoints, true, weight);
+                selectedCp += 1;
+                if (selectedCp > 3)
+                    selectedCp = 0;
+            }
+
+            bool redoCurve = false;
+
+            if (IsPressedWithDelay(Keys.Up, gameTime))
+            {
+                weight += .1f;
+                if (weight > 4f)
+                    weight = -1f;
+                redoCurve = true;
+            }
+
+            if (IsPressedWithDelay(Keys.Down, gameTime))
+            {
+                weight -= .1f;
+                if (weight < -1f)
+                    weight = 4f;
+                redoCurve = true;
             }
 
             ms = Mouse.GetState();
             if (ms.LeftButton == ButtonState.Pressed)
             {
-                _wayPoints[0] = new Vector3(ms.Position.X, ms.Position.Y, 0);
+                _wayPoints[selectedCp] = new Vector3(ms.Position.X, ms.Position.Y, 0);
+                redoCurve = true;
+            }
+
+            if (redoCurve)
+            {
                 cspline = new CurveBezierSpline(_wayPoints, true, weight);
             }
 
-            msg = $"Bezier " + "\n" + $"weight " + weight;
+            msg =
+                $"Bezier " +
+                $"\n" + $"weight " + weight +
+                $"\n" + $"selectedCp " + selectedCp
+                ;
 
 
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
@@ -140,13 +166,35 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         {
             this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            cspline.DrawWithSpriteBatch(_spriteBatch, gameTime);
-
             _spriteBatch.Begin();
+            cspline.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
             _spriteBatch.DrawString(_font, msg, new Vector2(10, 20), Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public bool IsPressedWithDelay(Keys key, GameTime gameTime)
+        {
+            if (Keyboard.GetState().IsKeyDown(key) && IsUnDelayed(gameTime))
+                return true;
+            else
+                return false;
+        }
+
+        float delay = 0f;
+        bool IsUnDelayed(GameTime gametime)
+        {
+            if (delay < 0)
+            {
+                delay = .25f;
+                return true;
+            }
+            else
+            {
+                delay -= (float)gametime.ElapsedGameTime.TotalSeconds;
+                return false;
+            }
         }
 
         public static Texture2D CreateDotTexture(GraphicsDevice device, Color color)
@@ -158,6 +206,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         }
 
     }
+
 
 }
 

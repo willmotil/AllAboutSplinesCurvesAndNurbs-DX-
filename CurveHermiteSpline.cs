@@ -17,7 +17,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         public int _numOfVisualCurvatureSegmentPoints = 80;
         // Parametric constant: 0.0 for the uniform spline, 0.5 for the centripetal spline, 1.0 for the chordal spline
         private float _weight = 0.5f;
-
+        List<Vector3> artificialCpLine = new List<Vector3>();
 
         public CurveHermiteSpline(Vector3[] controlPoints, bool useWikiVersion)
         {
@@ -50,6 +50,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         private void CreateSpline(Vector3[] controlPoints, bool useWikiVersion)
         {
+            artificialCpLine.Clear();
             cp = new Vector3[controlPoints.Length];
             for (int i = 0; i < controlPoints.Length; i++)
                 cp[i] = new Vector3(controlPoints[i].X, controlPoints[i].Y, controlPoints[i].Z);
@@ -116,6 +117,11 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             // for points p1 p2  we need to find the tangents of them using p0 p3 as well.
             var t1 = (p2 - p0) * _weight;  // when weight is about .707 should get circular continuity.
             var t2 = (p3 - p1) * _weight;
+
+            artificialCpLine.Add(t1 + p1);
+            artificialCpLine.Add( p1);
+            artificialCpLine.Add(t2 + p2);
+            artificialCpLine.Add(p2);
 
             return Vector3.Hermite(p1, t1, p2, t2, time); //just used monogames since it's already there.
         }
@@ -213,6 +219,11 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     DrawHelpers.DrawBasicLine(ToVector2(curveLinePoints[i]), ToVector2(curveLinePoints[i + 1]), 1, Color.Yellow);
 
                 flip = !flip;
+            }
+
+            for (int i = 0; i < artificialCpLine.Count - 1; i+=2)
+            {
+                DrawHelpers.DrawBasicLine(new Vector2(artificialCpLine[i].X, artificialCpLine[i].Y), new Vector2(artificialCpLine[i + 1].X, artificialCpLine[i + 1].Y), 1, Color.Purple);
             }
 
             for (int i = 0; i < cp.Length; i++)
