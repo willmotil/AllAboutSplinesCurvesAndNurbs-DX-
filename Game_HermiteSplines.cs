@@ -12,6 +12,8 @@ using System.Collections.Generic;
 // hermites next maybe https://www.youtube.com/watch?v=4vjBXh3xYB4
 // bezier thru points https://www.youtube.com/watch?v=tXrkNfHFakg
 
+// Kochanek-Bartels // http://news.povray.org/povray.binaries.tutorials/attachment/%3CXns91B880592482seed7@povray.org%3E/Splines.bas.txt
+
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
     public class Game_HermiteSplines : Game
