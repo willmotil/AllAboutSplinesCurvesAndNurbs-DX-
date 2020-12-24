@@ -35,10 +35,11 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
         };
 
-        CurveBezierSpline cspline;
+        CurveHermiteSpline cspline;
 
         int numOfPoints = 40;
         float weight = 0f;
+        int selectedCp = 0;
 
         string msg =
               $" " + "\n" +
@@ -78,8 +79,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _camera.MovementSpeedPerSecond = 3f;
             _camera.SetWayPoints(_wayPoints, true, 100);
 
-            //cspline = new CatMullSpline(_wayPoints);
-            cspline = new CurveBezierSpline(_wayPoints, true, 0.5f);
+            cspline = new CurveHermiteSpline(_wayPoints, true, 0.5f);
         }
 
 
@@ -89,7 +89,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.R))
+            if (IsPressedWithDelay(Keys.R, gameTime))
             {
                 var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 t += elapsed / 10f;
@@ -97,7 +97,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     t = 0;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.T))
+            if (IsPressedWithDelay(Keys.T, gameTime))
             {
                 var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 t -= elapsed / 10f;
@@ -105,22 +105,41 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     t = 1f;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            if (IsPressedWithDelay(Keys.Up, gameTime))
             {
-                weight += .01f;
+                weight += .1f;
                 if (weight > 2f)
                     weight = 0f;
-                cspline = new CurveBezierSpline(_wayPoints, true, weight);
+                cspline = new CurveHermiteSpline(_wayPoints, true, weight);
+            }
+
+            if (IsPressedWithDelay(Keys.Down, gameTime))
+            {
+                weight -= .1f;
+                if (weight < -1f)
+                    weight = 2f;
+                cspline = new CurveHermiteSpline(_wayPoints, true, weight);
+            }
+
+            if (IsPressedWithDelay(Keys.Tab, gameTime))
+            {
+                selectedCp += 1;
+                if (selectedCp > 3)
+                    selectedCp = 0;
             }
 
             ms = Mouse.GetState();
             if (ms.LeftButton == ButtonState.Pressed)
             {
-                _wayPoints[0] = new Vector3(ms.Position.X, ms.Position.Y, 0);
-                cspline = new CurveBezierSpline(_wayPoints, true, weight);
+                _wayPoints[selectedCp] = new Vector3(ms.Position.X, ms.Position.Y, 0);
+                cspline = new CurveHermiteSpline(_wayPoints, true, weight);
             }
 
-            msg = $"Hermite " + "\n" + $"weight " + weight;
+            msg = 
+                $"Hermite " + 
+                $"\n" + $"weight " + weight +
+                $"\n" + $"selectedCp " + selectedCp
+                ;
 
 
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
@@ -137,13 +156,35 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         {
             this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            cspline.DrawWithSpriteBatch(_spriteBatch, gameTime);
-
             _spriteBatch.Begin();
+            cspline.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
             _spriteBatch.DrawString(_font, msg, new Vector2(10, 20), Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public bool IsPressedWithDelay(Keys key, GameTime gameTime)
+        {
+            if (Keyboard.GetState().IsKeyDown(key) && IsUnDelayed(gameTime))
+                return true;
+            else
+                return false;
+        }
+
+        float delay = 0f;
+        bool IsUnDelayed(GameTime gametime)
+        {
+            if (delay < 0)
+            {
+                delay = .25f;
+                return true;
+            }
+            else
+            {
+                delay -= (float)gametime.ElapsedGameTime.TotalSeconds;
+                return false;
+            }
         }
 
         public static Texture2D CreateDotTexture(GraphicsDevice device, Color color)

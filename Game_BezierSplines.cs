@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Threading;
 
 // https://www.geogebra.org/m/WPHQ9rUt
 
@@ -16,7 +17,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
-        public static Texture2D _dot;
+        public Texture2D _dot;
 
         MouseState ms;
 
@@ -25,6 +26,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         WaypointCamera _camera;
         bool _useDemoWaypoints = true;
         static Vector3 _testTarget = new Vector3(350, 300, -25);
+
+        #endregion
 
         static Vector3 _wpOffset = new Vector3(350, 240, -25);
         Vector3[] _wayPoints = new Vector3[]
@@ -42,7 +45,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
               $" " + "\n"
               ;
 
-        #endregion
+
 
         public Game_BezierSplines()
         {
@@ -58,6 +61,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
+
+            // TODO: Add your initialization logic here
 
             base.Initialize();
         }
@@ -81,6 +86,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
 
         float t = 0f;
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
