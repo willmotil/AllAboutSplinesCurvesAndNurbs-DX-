@@ -9,7 +9,6 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
     // This one will take vector4s and they will have the weights added to make sharp edges and stuff.
 
-
     public class CurveBezierSplineWeighted
     {
         Vector3[] cp;

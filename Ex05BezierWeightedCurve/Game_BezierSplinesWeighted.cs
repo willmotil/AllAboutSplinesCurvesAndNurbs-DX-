@@ -20,6 +20,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         int numOfPoints = 100;
         float selectedWeight = 1f;
         int selectedCp = 0;
+        bool isCurveClosed = true;
         float maxSelectableWeight = 9f;
         float cycledTime = 0f;
         Vector3 positionAtCycledTime = Vector3.Zero;
@@ -69,7 +70,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("MgGenFont");
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
-            curve = new CurveBezierSplineWeighted(_wayPoints, 0.5f, false);
+            curve = new CurveBezierSplineWeighted(_wayPoints, 0.5f, isCurveClosed);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
         }
 
@@ -77,16 +78,27 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
             ms = Mouse.GetState();
             bool redoCurve = false;
+            CurveIterationTimer(gameTime);
 
-            if (IsPressedWithDelay(Keys.Tab, gameTime))
+            // next control point
+            if (IsPressedWithDelay(Keys.Space, gameTime))
             {
                 selectedCp += 1;
                 if (selectedCp > _wayPoints.Length - 1)
                     selectedCp = 0;
             }
 
+            // switch curve open or closed.
+            if (IsPressedWithDelay(Keys.Tab, gameTime))
+            {
+                isCurveClosed = !isCurveClosed;
+                redoCurve = true;
+            }
+
+            // adjust weight
             if (IsPressedWithDelay(Keys.Up, gameTime) || ms.ScrollWheelValue > currentScrollWheelvalue)
             {
                 selectedWeight += .05f;
@@ -97,6 +109,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 redoCurve = true;
             }
 
+            // adjust weight
             if (IsPressedWithDelay(Keys.Down, gameTime) || ms.ScrollWheelValue < currentScrollWheelvalue)
             {
                 selectedWeight -= .05f;
@@ -107,32 +120,41 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 redoCurve = true;
             }
 
+            // adjust control point position.
             if (ms.LeftButton == ButtonState.Pressed)
             {
                 _wayPoints[selectedCp] = new Vector4(ms.Position.X, ms.Position.Y, 0, _wayPoints[selectedCp].W);
                 redoCurve = true;
             }
 
+            // select a control point.
             if (ms.RightButton == ButtonState.Pressed)
                 CheckPointSelected();
 
             if (redoCurve)
-                curve = new CurveBezierSplineWeighted(_wayPoints, false);
+                curve = new CurveBezierSplineWeighted(_wayPoints, isCurveClosed);
 
-            var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            cycledTime += elapsed / 10f;
-            if (cycledTime > 1f)
-                cycledTime = 0;
-            positionAtCycledTime = curve.GetSplinePoint(cycledTime);
-
+            string msg2 = "Open";
+            if(isCurveClosed)
+                msg2 = "Closed";
             msg =
                 $"Bezier " +
+                $"\n" + $"Press Tab ....... Curve is {msg2}" +
                 $"\n" + $"Left Click ........ Move selectedCp " +
                 $"\n" + $"Right Click ...... Selected Cp " + selectedCp +
                 $"\n" + $"Mouse Scroll ... Alter Weight " + selectedWeight
                 ;
 
             base.Update(gameTime);
+        }
+
+        public void CurveIterationTimer(GameTime gameTime)
+        {
+            var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            cycledTime += elapsed / 10f;
+            if (cycledTime > 1f)
+                cycledTime = 0;
+            positionAtCycledTime = curve.GetSplinePoint(cycledTime);
         }
 
         public void CheckPointSelected()
