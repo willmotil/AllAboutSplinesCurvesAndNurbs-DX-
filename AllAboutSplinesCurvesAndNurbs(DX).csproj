@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Remove="BasicStuff.cs" />
     <Compile Remove="GameExCameraFog.cs" />
+    <Compile Remove="Misc\BasicStuff.cs" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />

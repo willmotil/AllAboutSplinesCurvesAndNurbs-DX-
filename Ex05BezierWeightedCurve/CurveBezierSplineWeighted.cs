@@ -83,7 +83,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             }
         }
 
-        private Vector3 GetSplinePoint(float Time)
+        public Vector3 GetSplinePoint(float Time)
         {
             if (_closedControlPoints)
             {
@@ -240,12 +240,12 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
             for (int i = 0; i < artificialCpLine.Count - 1; i += 2)
             {
-                DrawHelpers.DrawBasicLine(new Vector2(artificialCpLine[i].X, artificialCpLine[i].Y), new Vector2(artificialCpLine[i + 1].X, artificialCpLine[i + 1].Y), lineThickness, Color.Purple);
+                DrawHelpers.DrawBasicLine(new Vector2(artificialCpLine[i].X, artificialCpLine[i].Y), new Vector2(artificialCpLine[i + 1].X, artificialCpLine[i + 1].Y), 1, Color.Purple);
             }
 
             for (int i = 0; i < artificialCpLine.Count - 1; i += 2)
             {
-                DrawHelpers.DrawBasicLine(new Vector2(artificialTangentLine[i].X, artificialTangentLine[i].Y), new Vector2(artificialTangentLine[i + 1].X, artificialTangentLine[i + 1].Y), lineThickness, Color.Pink);
+                DrawHelpers.DrawBasicLine(new Vector2(artificialTangentLine[i].X, artificialTangentLine[i].Y), new Vector2(artificialTangentLine[i + 1].X, artificialTangentLine[i + 1].Y), 1, Color.Pink);
             }
 
             for (int i = 0; i < cp.Length; i++)

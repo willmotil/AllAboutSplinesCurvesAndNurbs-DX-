@@ -21,6 +21,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         float selectedWeight = 1f;
         int selectedCp = 0;
         float maxSelectableWeight = 9f;
+        float cycledTime = 0f;
+        Vector3 positionAtCycledTime = Vector3.Zero;
         string msg =
               $" " + "\n" +
               $" " + "\n"
@@ -33,11 +35,15 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         //    new Vector4(80, 80, -5, 1f) + _wpOffset, new Vector4(80, -80, -5, 1) + _wpOffset, new Vector4(-80, -80, -5, 1f) + _wpOffset, new Vector4(-80, 80, -5, 1f) + _wpOffset,
         //};
 
+        //Vector4[] _wayPoints = new Vector4[]
+        //{
+        //    new Vector4(80, 0, -5, 1f) + _wpOffset, new Vector4(0, -80, -5, 1f) + _wpOffset, new Vector4(-80, 0, -5, 1f) + _wpOffset, new Vector4(0, 80, -5, 1f) + _wpOffset,
+        //};
+
         Vector4[] _wayPoints = new Vector4[]
         {
-            new Vector4(80, 0, -5, 1f) + _wpOffset, new Vector4(0, -80, -5, 1f) + _wpOffset, new Vector4(-80, 0, -5, 1f) + _wpOffset, new Vector4(0, 80, -5, 1f) + _wpOffset,
+             new Vector4(-100, -80,  0, 1f) + _wpOffset, new Vector4(-50, 80,  0, 1f) + _wpOffset, new Vector4(0, -80,  0, 1f) + _wpOffset, new Vector4(50, 80,  0, 1f) + _wpOffset, new Vector4(100, -80, 0, 1f) + _wpOffset, new Vector4(150, 80, 0, 1f) + _wpOffset
         };
-
 
 
         public Game_BezierSplinesWeighted()
@@ -67,11 +73,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
         }
 
-
-        float t = 0f;
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) 
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             ms = Mouse.GetState();
             bool redoCurve = false;
@@ -79,7 +83,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             if (IsPressedWithDelay(Keys.Tab, gameTime))
             {
                 selectedCp += 1;
-                if (selectedCp > _wayPoints.Length -1)
+                if (selectedCp > _wayPoints.Length - 1)
                     selectedCp = 0;
             }
 
@@ -115,11 +119,17 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             if (redoCurve)
                 curve = new CurveBezierSplineWeighted(_wayPoints, false);
 
+            var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            cycledTime += elapsed / 10f;
+            if (cycledTime > 1f)
+                cycledTime = 0;
+            positionAtCycledTime = curve.GetSplinePoint(cycledTime);
+
             msg =
                 $"Bezier " +
                 $"\n" + $"Left Click ........ Move selectedCp " +
                 $"\n" + $"Right Click ...... Selected Cp " + selectedCp +
-                $"\n" + $"Mouse Scroll ... Alter Weight " + selectedWeight 
+                $"\n" + $"Mouse Scroll ... Alter Weight " + selectedWeight
                 ;
 
             base.Update(gameTime);
@@ -140,6 +150,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
             _spriteBatch.Begin();
             curve.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
+            DrawHelpers.DrawCrossHair(positionAtCycledTime.ToVector2(), 5, Color.White);
             _spriteBatch.DrawString(_font, msg, new Vector2(10, 20), Color.White);
             _spriteBatch.End();
 
