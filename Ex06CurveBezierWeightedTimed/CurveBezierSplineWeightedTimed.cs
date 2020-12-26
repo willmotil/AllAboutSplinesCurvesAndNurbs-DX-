@@ -361,8 +361,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             for (int i = 0; i < cps.Length; i++)
             {
                 string msg = 
-                    $" CP[{i}] distStart:{cps[i].startDistance.ToString("###0.00")} segDist:{cps[i].distanceToNextCp.ToString("###0.00")}" +
-                    $"\n w: {cps[i].weight.ToString("0.000")}"
+                    $" CP[{i}]  w: {cps[i].weight.ToString("0.000")}" +
+                    $"\n startDist: {cps[i].startDistance.ToString("###0.00")}" +
+                    $"\n segDist: {cps[i].distanceToNextCp.ToString("###0.00")}"
                     ;
                 _spriteBatch.DrawString(font, msg, new Vector2(cps[i].position.X, cps[i].position.Y), Color.Black);
             }

@@ -1,5 +1,7 @@
 # AllAboutSplinesCurvesAndNurbs-DX-
- Little testing class
+ Little testing class using MonoGame  https://www.monogame.net/
+
+ Un-Comment the desired example in program cs
 
  I have made example folders in the same order as the things i have worked on or tried.
  Ex 2 thru 4 are closed curve examples.

@@ -1,6 +1,4 @@
 ﻿
-
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +8,7 @@ using System.Threading;
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
 
-    public class Game_BezierSplinesWeightedTimed : Game
+    public class Game_MeshBsplineWeightedTimed : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -18,8 +16,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         public static Texture2D _dot;
         MouseState ms;
 
-        public int currentScrollWheelvalue = 0;
-        CurveBezierSplineWeightedTimed curve;
+        MeshBsplineWeightedTimed curve;
         float maxSelectableWeight = 9f;
         float selectedWeight = 1f;
         int numOfPoints = 50;
@@ -28,6 +25,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         bool isUniformedUsed = true;
         bool showGeneratedTangentsPositions = false;
         float cycledTime = 0f;
+        float gameTimeInSeconds = 0;
+        public int currentScrollWheelvalueForWeight = 0;
         Vector3 positionAtCycledTime = Vector3.Zero;
         string msg =
               $" " + "\n" +
@@ -36,28 +35,16 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         static Vector4 _wpOffset = new Vector4(350, 240, +5, 0);
 
-        //Vector4[] _wayPoints = new Vector4[]
-        //{
-        //    new Vector4(80, 80, -5, 1f) + _wpOffset, new Vector4(80, -80, -5, 1) + _wpOffset, new Vector4(-80, -80, -5, 1f) + _wpOffset, new Vector4(-80, 80, -5, 1f) + _wpOffset,
-        //};
-
-        //Vector4[] _wayPoints = new Vector4[]
-        //{
-        //    new Vector4(80, 0, -5, 1f) + _wpOffset, new Vector4(0, -80, -5, 1f) + _wpOffset, new Vector4(-80, 0, -5, 1f) + _wpOffset, new Vector4(0, 80, -5, 1f) + _wpOffset,
-        //};
-
-        //Vector4[] _wayPoints = new Vector4[]
-        //{
-        //     new Vector4(-100, -80,  0, 1f) + _wpOffset, new Vector4(-50, 80,  0, 1f) + _wpOffset, new Vector4(0, -80,  0, 1f) + _wpOffset, new Vector4(50, 80,  0, 1f) + _wpOffset, new Vector4(100, -80, 0, 1f) + _wpOffset, new Vector4(150, 80, 0, 1f) + _wpOffset
-        //};
-
         Vector4[] _wayPoints = new Vector4[]
         {
-             new Vector4(100, 150,  0, 1f) , new Vector4(150, 200,  0, 1f) , new Vector4(250, 250,  0, 1f) , new Vector4(500, 150,  0, 1f) , new Vector4(600, 200, 0, 1f) 
+             new Vector4(100, 200,  0, 1f) , new Vector4(200, 200,  0, 1f) , new Vector4(400, 200,  0, 1f) , new Vector4(500, 200,  0, 1f) ,
+             new Vector4(100, 300,  0, 1f) , new Vector4(200, 300,  0, 1f) , new Vector4(400, 300,  0, 1f) , new Vector4(500, 300,  0, 1f) ,
+             new Vector4(100, 400,  0, 1f) , new Vector4(200, 400,  0, 1f) , new Vector4(400, 400,  0, 1f) , new Vector4(500, 400,  0, 1f) ,
+             new Vector4(100, 500,  0, 1f) , new Vector4(200, 500,  0, 1f) , new Vector4(400, 500,  0, 1f) , new Vector4(500, 500,  0, 1f)
         };
 
 
-        public Game_BezierSplinesWeightedTimed()
+        public Game_MeshBsplineWeightedTimed()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -82,8 +69,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
 
-            curve = new CurveBezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
-            curve._showTangents = showGeneratedTangentsPositions;
+            curve = new MeshBsplineWeightedTimed(_wayPoints, 4, 4, numOfPoints, isCurveClosed, isUniformedUsed);
         }
 
         protected override void Update(GameTime gameTime)
@@ -93,20 +79,20 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
             ms = Mouse.GetState();
             bool redoCurve = false;
-            CurveIterationTimer(gameTime);
+            CurveIterationTimer(gameTime, 10f);
 
 
             // show extra position and tangent lines.
             if (IsPressedWithDelay(Keys.F1, gameTime))
             {
                 showGeneratedTangentsPositions = !showGeneratedTangentsPositions;
-                curve._showTangents = showGeneratedTangentsPositions;
+                //curve._showTangents = showGeneratedTangentsPositions;
             }
 
             // switch to a uniformed or non uniformed curve.
             if (IsPressedWithDelay(Keys.Space, gameTime))
             {
-                isUniformedUsed = ! isUniformedUsed;
+                isUniformedUsed = !isUniformedUsed;
                 redoCurve = true;
             }
 
@@ -118,24 +104,24 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             }
 
             // adjust weight
-            if (IsPressedWithDelay(Keys.Up, gameTime) || ms.ScrollWheelValue > currentScrollWheelvalue)
+            if (IsPressedWithDelay(Keys.Up, gameTime) || ms.ScrollWheelValue > currentScrollWheelvalueForWeight)
             {
                 selectedWeight += .05f;
                 if (selectedWeight > maxSelectableWeight)
                     selectedWeight = -1f;
                 _wayPoints[selectedCp].W = selectedWeight;
-                currentScrollWheelvalue = ms.ScrollWheelValue;
+                currentScrollWheelvalueForWeight = ms.ScrollWheelValue;
                 redoCurve = true;
             }
 
             // adjust weight
-            if (IsPressedWithDelay(Keys.Down, gameTime) || ms.ScrollWheelValue < currentScrollWheelvalue)
+            if (IsPressedWithDelay(Keys.Down, gameTime) || ms.ScrollWheelValue < currentScrollWheelvalueForWeight)
             {
                 selectedWeight -= .05f;
                 if (selectedWeight < -1f)
                     selectedWeight = maxSelectableWeight;
                 _wayPoints[selectedCp].W = selectedWeight;
-                currentScrollWheelvalue = ms.ScrollWheelValue;
+                currentScrollWheelvalueForWeight = ms.ScrollWheelValue;
                 redoCurve = true;
             }
 
@@ -159,17 +145,17 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 CheckPointSelected();
 
             if (redoCurve)
-                    curve = new CurveBezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+                curve = new MeshBsplineWeightedTimed(_wayPoints , 4 , 4 , numOfPoints, isCurveClosed, isUniformedUsed);
 
             string msg2 = "Open";
             if (isCurveClosed)
                 msg2 = "Closed";
             string msg3 = "NonUniform";
-            if(isUniformedUsed)
+            if (isUniformedUsed)
                 msg3 = "Uniform";
             msg =
-                $"Bezier " +
-                $"\n" + $"Total Distance: {curve.TotalCurveDistance.ToString("#########0.000")}" +
+                $"GameTime In Seconds {gameTimeInSeconds.ToString("#########0.00")}  Cycle time over curve: {cycledTime.ToString("###0.00")}" +
+                $"\n" + $"Bezier Mesh" +
                 $"\n" + $"Press Tab ....... Curve is {msg2}" +
                 $"\n" + $"Press Space .. Curve is {msg3}" +
                 $"\n" + $"Left Click ........ Move selectedCp " +
@@ -180,16 +166,17 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             base.Update(gameTime);
         }
 
-        public void CurveIterationTimer(GameTime gameTime)
+        public void CurveIterationTimer(GameTime gameTime, float cycleTimeInSeconds)
         {
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            cycledTime += elapsed / 10f;
+            cycledTime += elapsed / cycleTimeInSeconds;
             if (cycledTime > 1f)
                 cycledTime = 0;
-            if(isUniformedUsed)
-                positionAtCycledTime = curve.GetUniformSplinePoint(cycledTime);
-            else
-                positionAtCycledTime = curve.GetNonUniformSplinePoint(cycledTime);
+            gameTimeInSeconds += elapsed;
+            //if (isUniformedUsed)
+            //    positionAtCycledTime = curve.GetUniformSplinePoint(cycledTime);
+            //else
+            //    positionAtCycledTime = curve.GetNonUniformSplinePoint(cycledTime);
         }
 
         public void CheckPointSelected()
@@ -206,9 +193,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-            curve.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
+            //curve.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
             DrawHelpers.DrawCrossHair(positionAtCycledTime.ToVector2(), 5, Color.White);
-            _spriteBatch.DrawString(_font, msg, new Vector2(10, 20), Color.White);
+            _spriteBatch.DrawString(_font, msg, new Vector2(10, 5), Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -247,4 +234,5 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
     }
 }
+
 
