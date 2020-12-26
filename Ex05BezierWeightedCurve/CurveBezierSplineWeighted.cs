@@ -21,6 +21,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         List<Vector3> artificialCpLine = new List<Vector3>();
         List<Vector3> artificialTangentLine = new List<Vector3>();
 
+
+        int currentCpIndex = 0;
         int index0 = 0;
         int index1 = 0;
         int index2 = 0;
@@ -59,7 +61,6 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         private void CreateSpline(Vector4[] controlPoints)
         {
-
             artificialCpLine.Clear();
             artificialTangentLine.Clear();
             cp = new Vector3[controlPoints.Length];
@@ -79,7 +80,13 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             {
                 float t = (float)(i) / (float)(divisor);
                 curveLinePoints[i] = GetSplinePoint(t);
+                
             }
+        }
+
+        public void FindCpLengths()
+        {
+
         }
 
         public Vector3 GetSplinePoint(float Time)
@@ -89,16 +96,16 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 var plotRange = cp.Length;
                 var offset = plotRange * Time;
                 var index = (int)(offset);
-                var fracTime = offset - (float)index;
-                return DetermineSplines(index, fracTime);
+                var fractionalTime = offset - (float)index;
+                return DetermineSplines(index, fractionalTime);
             }
             else
             {
                 var plotRange = cp.Length -1;
                 var offset = plotRange * Time;
                 var index = (int)(offset);
-                var fracTime = offset - (float)index;
-                return DetermineSplines(index, fracTime);
+                var fractionalTime = offset - (float)index;
+                return DetermineSplines(index, fractionalTime);
             }
         }
 
@@ -108,20 +115,18 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             {
                 // caluclate conditional cp indexs at the moments
                 index0 = EnsureIndexInRange(cpIndex - 1);
-                index1 = EnsureIndexInRange(cpIndex + 0);
+                index1 = EnsureIndexInRange(cpIndex + 0);//<
                 index2 = EnsureIndexInRange(cpIndex + 1);
                 index3 = EnsureIndexInRange(cpIndex + 2);
-                //return WeightedPoint(cp[index0], cp[index1], cp[index2], cp[index3], fracTime);
             }
             else
             {
                 if (cpIndex == 0)
                 {
                     index0 = EnsureIndexInRange(cpIndex + 0);
-                    index1 = EnsureIndexInRange(cpIndex + 0);
+                    index1 = EnsureIndexInRange(cpIndex + 0);//<<
                     index2 = EnsureIndexInRange(cpIndex + 1);
                     index3 = EnsureIndexInRange(cpIndex + 2);
-                    //return WeightedPoint(cp[index0], cp[index1], cp[index2], cp[index3], fracTime);
                 }
                 if (cpIndex >= cp.Length - 2)
                 {
@@ -129,9 +134,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     index1 = EnsureIndexInRange(cpIndex + 0); // <<
                     index2 = EnsureIndexInRange(cpIndex + 1);
                     index3 = EnsureIndexInRange(cpIndex + 1);
-                    //return WeightedPoint(cp[index0], cp[index1], cp[index2], cp[index3], fracTime);
                 }
             }
+            currentCpIndex = index1;
             return WeightedPoint(cp[index0], cp[index1], cp[index2], cp[index3], fracTime);
         }
 

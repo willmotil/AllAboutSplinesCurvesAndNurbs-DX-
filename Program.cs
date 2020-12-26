@@ -11,8 +11,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             //using (var game = new Game_CatMullRomSplines()) game.Run();
             //using (var game = new Game_HermiteSplines()) game.Run();
             //using (var game = new Game_BezierSplines()) game.Run();
-            using (var game = new Game_BezierSplinesWeighted()) game.Run();
-
+            //using (var game = new Game_BezierSplinesWeighted()) game.Run();
+            using (var game = new Game_BezierSplinesWeightedTimed()) game.Run();
+            
         }
     }
 }
