@@ -18,10 +18,10 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         //BezierSplineWeightedTimedForMesh curve;
 
-        /// <summary>
-        /// This holds the information relating to the control points given.
-        /// </summary>
-        ControlPoint[] cps;
+        ///// <summary>
+        ///// This holds the information relating to the control points given.
+        ///// </summary>
+        ControlPointRowColumn cps = new ControlPointRowColumn();
 
         /// <summary>
         /// cp width 
@@ -35,13 +35,12 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// This holds the information relating to the control points that will be calculated.
         /// </summary>
-        ControlPoint[] newcps;
+        ControlPointRowColumn newcps = new ControlPointRowColumn();
 
         /// <summary>
         /// these are the reslting generated NonUniform timed or Uniformly timed line points.
         /// </summary>
         Vector3[] curveLinePoints;
-        /// <summary>
 
         /// <summary>
         /// when set to true or closed this will loop the last point to curve round to the first and the curve will be a loop.
@@ -75,7 +74,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         //#endregion
 
         #region  temporary tracking values used thruout many methods as the curves are processed.
-        int currentCpIndex = 0;
+        int currentCpXindex = 0;
         int index0 = 0;
         int index1 = 0;
         int index2 = 0;
@@ -102,8 +101,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             CreateMesh(controlPoints, width, height);
         }
 
-        /// <summary>
-        /// 
+        /// <summary> 
         /// </summary>
         public MeshBsplineWeightedTimed(Vector4[] controlPoints, int width, int height, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve, float globalWeight, bool showTangents)
         {
@@ -117,217 +115,238 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
 
 
-        #region curve calculation methods
+        //#region curve calculation methods
 
         private void CreateMesh(Vector4[] controlPoints, int width, int height)
         {
             this.cpWidth = width;
             this.cpHeight = height;
-            CreateSpline(controlPoints);
+            //CreateSpline(controlPoints);
         }
 
-        private void CreateSpline(Vector4[] controlPoints)
-        {
-            //artificialCpLine.Clear();
-            //artificialTangentLine.Clear();
+        //private void CreateSpline(Vector4[] controlPoints)
+        //{
+        //    //artificialCpLine.Clear();
+        //    //artificialTangentLine.Clear();
+        //    //cps = new ControlPoint[controlPoints.Length];
 
-            cps = new ControlPoint[controlPoints.Length];
-            for (int index = 0; index < controlPoints.Length; index++)
-            {
-                var cpInstance = new ControlPoint();
-                cpInstance.position = new Vector3(controlPoints[index].X, controlPoints[index].Y, controlPoints[index].Z);
-                cpInstance.weight = controlPoints[index].W;
-                cpInstance.cpIndex = index;
-                cps[index] = cpInstance;
-            }
-
-            newcps = new ControlPoint[controlPoints.Length];
-            FindCpLengthsAndIntegratedTotalCurveLength();
-
-            //curveLinePoints = new Vector3[_numOfCurvatureSegmentPoints * _numOfCurvatureSegmentPoints];
-
-            //var loopCount = _numOfCurvatureSegmentPoints;
-            //var divisor = loopCount - 1;
-
-            //// Create the curve either uniformed or non uniformed.
-            //if (_uniformedCurve)
-            //{
-            //    for (int i = 0; i < loopCount; i++)
-            //    {
-            //        float t = (float)(i) / (float)(divisor);
-            //        curveLinePoints[i] = GetUniformSplinePoint(t);
-            //    }
-            //}
-            //else
-            //{
-            //    for (int i = 0; i < loopCount; i++)
-            //    {
-            //        float t = (float)(i) / (float)(divisor);
-            //        curveLinePoints[i] = GetNonUniformSplinePoint(t);
-            //    }
-            //}
-        }
-
-        public void FindCpLengthsAndIntegratedTotalCurveLength()
-        {
-            var loopCount = cps.Length;
-            var divisor = loopCount - 1;
-
-            var lastPos = cps[0].position;
-            totaldist = 0;
-            float prevTotalDist = 0;
-
-            var integrateStepAmount = 1f / _numberOfIntigrationStepsPerSegment;
-            for (int cptomeasure = 0; cptomeasure < loopCount; cptomeasure++)
-            {
-                float cpToNextCpDistance = 0;
-                for (float time = 0f; time < integrateStepAmount + 000001f; time += integrateStepAmount)
-                {
-                    var nowPosition = DetermineSplines(cptomeasure, time);
-                    if (time > 0f)
-                    {
-                        var dist = Vector3.Distance(nowPosition, lastPos);
-                        if (nowPosition != lastPos)
-                            cpToNextCpDistance += dist;
-                    }
-                    lastPos = nowPosition;
-                }
-
-                prevTotalDist = totaldist;
-                if (_closedControlPoints == false && cptomeasure == loopCount - 1)
-                    cpToNextCpDistance = 0;
-                else
-                    totaldist += cpToNextCpDistance;
-
-                cps[cptomeasure].startDistance = prevTotalDist;
-                cps[cptomeasure].distanceToNextCp = cpToNextCpDistance;
-            }
-        }
-
-        private Vector3 DetermineSplines(int cpIndex, float fracTime)
-        {
-            if (_closedControlPoints || (cpIndex > 0 && cpIndex < cps.Length - 2))
-            {
-                // caluclate conditional cp indexs at the moments
-                index0 = EnsureIndexInRange(cpIndex - 1);
-                index1 = EnsureIndexInRange(cpIndex + 0);//<
-                index2 = EnsureIndexInRange(cpIndex + 1);
-                index3 = EnsureIndexInRange(cpIndex + 2);
-            }
-            else
-            {
-                if (cpIndex == 0)
-                {
-                    index0 = EnsureIndexInRange(cpIndex + 0);
-                    index1 = EnsureIndexInRange(cpIndex + 0);//<<
-                    index2 = EnsureIndexInRange(cpIndex + 1);
-                    index3 = EnsureIndexInRange(cpIndex + 2);
-                }
-                if (cpIndex >= cps.Length - 2)
-                {
-                    index0 = EnsureIndexInRange(cpIndex - 1);
-                    index1 = EnsureIndexInRange(cpIndex + 0); // <<
-                    index2 = EnsureIndexInRange(cpIndex + 1);
-                    index3 = EnsureIndexInRange(cpIndex + 1);
-                }
-            }
-            currentCpIndex = index1;
-            return WeightedPoint(cps[index0].position, cps[index1].position, cps[index2].position, cps[index3].position, fracTime);
-        }
-
-        public int EnsureIndexInRange(int i)
-        {
-            while (i < 0)
-                i = i + (cps.Length);
-            while (i > (cps.Length - 1))
-                i = i - (cps.Length);
-            return i;
-        }
-
-        /// <summary>
-        /// Here we go this one is only for closed curves open ones are easy just append the end points to the control point list
-        /// </summary>
-        /// <returns></returns>
-        public Vector3 WeightedPoint(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, float time)
-        {
-            Vector3 p0 = v0; Vector3 p1 = v1; Vector3 p2 = v2; Vector3 p3 = v3;
-
-            var segmentDistance = Vector3.Distance(v2, v1) * 0.35355339f; // * _weight;
-
-            var n1 = Vector3.Normalize(GetIdealTangentVector(v0, v1, v2));
-            p1 = v1 + n1 * segmentDistance * cps[index1].weight;
-            p0 = v1;
-
-            var n2 = Vector3.Normalize(GetIdealTangentVector(v3, v2, v1));
-            p2 = v2 + n2 * segmentDistance * cps[index2].weight;
-            p3 = v2;
-
-            //float t = time * .33f + .33f;
-            float t = time;
-            float t2 = t * t;
-            float t3 = t2 * t;
-            float i = 1f - t;
-            float i2 = i * i;
-            float i3 = i2 * i;
-
-            Vector3 result =
-                (i3) * 1f * p0 +
-                (i2 * t) * 3f * p1 +
-                (i * t2) * 3f * p2 +
-                (t3) * 1f * p3;
-
-            //artificialCpLine.Add(p0);  // visualization stuff.
-            //artificialCpLine.Add(p1);
-            //artificialCpLine.Add(p2);
-            //artificialCpLine.Add(p3);
-
-            return result;
-        }
-
-        public Vector3 GetIdealTangentVector(Vector3 a, Vector3 b, Vector3 c)
-        {
-            float disa = Vector3.Distance(a, b);
-            float disc = Vector3.Distance(b, c);
-            float ratioa = disa / (disa + disc);
-            var pAB = ((b - a) * ratioa) + a;
-            var pBC = ((c - b) * ratioa) + b;
-            var result = pBC - pAB;
-            // prevent nan later on.
-            if (result == Vector3.Zero)
-                result = c - a;
-
-            //artificialTangentLine.Add(pAB); // visualization stuff.
-            //artificialTangentLine.Add(pBC);
-
-            return result;
-        }
-
-
-        int GetCpIndex(int x, int y)
-        {
-            return y * cpWidth + x;
-        }
-        Point GetCpIndexXY(int index)
-        {
-            int y = (int)(index / cpWidth);
-            int x = index - y * cpWidth;
-            return new Point(x, y);
-        }
-
-        int GetCurveIndex(int x, int y)
-        {
-            return y * _numOfCurvatureSegmentPoints + x;
-        }
-        Point GetCurveIndexXY(int index)
-        {
-            int y = (int)(index / _numOfCurvatureSegmentPoints);
-            int x = index - y * _numOfCurvatureSegmentPoints;
-            return new Point(x, y);
-        }
+        //    cps.cpWidth = cpWidth;
+        //    cps.cpHeight = cpHeight;
+        //    for (int index = 0; index < controlPoints.Length; index++)
+        //    {
+        //        var cpInstance = new ControlPoint();
+        //        cpInstance.position = new Vector3(controlPoints[index].X, controlPoints[index].Y, controlPoints[index].Z);
+        //        cpInstance.weight = controlPoints[index].W;
+        //        cpInstance.cpIndex = index;
+        //        cps.SetCp(cpInstance , index);
+        //    }
 
 
 
-        #endregion
+        //    FindCpLengthsAndIntegratedTotalCurveLength();
+
+        //    //curveLinePoints = new Vector3[_numOfCurvatureSegmentPoints * _numOfCurvatureSegmentPoints];
+
+        //    //var loopCount = _numOfCurvatureSegmentPoints;
+        //    //var divisor = loopCount - 1;
+
+        //    //// Create the curve either uniformed or non uniformed.
+        //    //if (_uniformedCurve)
+        //    //{
+        //    //    for (int i = 0; i < loopCount; i++)
+        //    //    {
+        //    //        float t = (float)(i) / (float)(divisor);
+        //    //        curveLinePoints[i] = GetUniformSplinePoint(t);
+        //    //    }
+        //    //}
+        //    //else
+        //    //{
+        //    //    for (int i = 0; i < loopCount; i++)
+        //    //    {
+        //    //        float t = (float)(i) / (float)(divisor);
+        //    //        curveLinePoints[i] = GetNonUniformSplinePoint(t);
+        //    //    }
+        //    //}
+        //}
+
+        //public void FindCpLengthsAndIntegratedTotalCurveLength()
+        //{
+        //    var yloopCount = cps.cpHeight;
+        //    var ydivisor = yloopCount - 1;
+
+        //    var xloopCount = cps.cpWidth;
+        //    var xdivisor = xloopCount - 1;
+
+        //    var lastPos = cps.GetCp(0, 0).position;
+        //    totaldist = 0;
+        //    float prevTotalDist = 0;
+
+        //    var integrateStepAmount = 1f / _numberOfIntigrationStepsPerSegment;
+        //    for (int cpYtomeasure = 0; cpYtomeasure < yloopCount; cpYtomeasure++)
+        //    {
+        //        for (int cpXtomeasure = 0; cpXtomeasure < xloopCount; cpXtomeasure++)
+        //        {
+        //            float cpToNextCpDistance = 0;
+        //            for (float time = 0f; time < integrateStepAmount + 000001f; time += integrateStepAmount)
+        //            {
+        //                var nowPosition = DetermineSplinesByRow(cpXtomeasure, cpYtomeasure, time);
+        //                if (time > 0f)
+        //                {
+        //                    var dist = Vector3.Distance(nowPosition, lastPos);
+        //                    if (nowPosition != lastPos)
+        //                        cpToNextCpDistance += dist;
+        //                }
+        //                lastPos = nowPosition;
+        //            }
+
+        //            prevTotalDist = totaldist;
+        //            if (_closedControlPoints == false && cpXtomeasure == xloopCount - 1)
+        //                cpToNextCpDistance = 0;
+        //            else
+        //                totaldist += cpToNextCpDistance;
+
+        //            cps[cpXtomeasure].startDistance = prevTotalDist;
+        //            cps[cpXtomeasure].distanceToNextCp = cpToNextCpDistance;
+        //        }
+        //    }
+        //}
+
+        //private Vector3 DetermineSplinesByRow(int cpXindex, int cpYindex, float fracTime)
+        //{
+        //    if (_closedControlPoints || (cpXindex > 0 && cpXindex < cps.cpWidth - 2))
+        //    {
+        //        // caluclate conditional cp indexs at the moments
+        //        index0 = EnsureIndexWidthInRange(cpXindex - 1);
+        //        index1 = EnsureIndexWidthInRange(cpXindex + 0);//<
+        //        index2 = EnsureIndexWidthInRange(cpXindex + 1);
+        //        index3 = EnsureIndexWidthInRange(cpXindex + 2);
+        //    }
+        //    else
+        //    {
+        //        if (cpXindex == 0)
+        //        {
+        //            index0 = EnsureIndexWidthInRange(cpXindex + 0);
+        //            index1 = EnsureIndexWidthInRange(cpXindex + 0);//<<
+        //            index2 = EnsureIndexWidthInRange(cpXindex + 1);
+        //            index3 = EnsureIndexWidthInRange(cpXindex + 2);
+        //        }
+        //        if (cpXindex >= cps.cpWidth - 2)
+        //        {
+        //            index0 = EnsureIndexWidthInRange(cpXindex - 1);
+        //            index1 = EnsureIndexWidthInRange(cpXindex + 0); // <<
+        //            index2 = EnsureIndexWidthInRange(cpXindex + 1);
+        //            index3 = EnsureIndexWidthInRange(cpXindex + 1);
+        //        }
+        //    }
+        //    currentCpXindex = index1;
+
+        //    //return WeightedPoint([index0].position, cps[index1].position, cps[index2].position, cps[index3].position, fracTime);
+        //    return WeightedPoint(cps.GetCp(index0, cpYindex), cps.GetCp(index1, cpYindex), cps.GetCp(index2, cpYindex), cps.GetCp(index3, cpYindex), fracTime);
+        //}
+
+        //public int EnsureIndexWidthInRange(int x)
+        //{
+        //    while (x < 0)
+        //        x = x + (cps.cpWidth);
+        //    while (x > (cps.cpWidth - 1))
+        //        x = x - (cps.cpWidth);
+        //    return x;
+        //}
+
+        //public int EnsureIndexHeightInRange(int y)
+        //{
+        //    while (y < 0)
+        //        y = y + (cps.cpHeight);
+        //    while (y > (cps.cpHeight - 1))
+        //        y = y - (cps.cpHeight);
+        //    return y;
+        //}
+
+        ///// <summary>
+        ///// Here we go this one is only for closed curves open ones are easy just append the end points to the control point list
+        ///// </summary>
+        ///// <returns></returns>
+        //public Vector3 WeightedPoint(ControlPoint c0, ControlPoint c1, ControlPoint c2, ControlPoint c3, float time)
+        //{
+        //    Vector3 v0 = c0.position; Vector3 v1 = c1.position; Vector3 v2 = c2.position; Vector3 v3 = c3.position;
+        //    Vector3 p0 = c0.position; Vector3 p1 = c1.position; Vector3 p2 = c2.position; Vector3 p3 = c3.position;
+
+        //    var segmentDistance = Vector3.Distance(v2, v1) * 0.35355339f; // * _weight;
+
+        //    var n1 = Vector3.Normalize(GetIdealTangentVector(v0, v1, v2));
+        //    p1 = v1 + n1 * segmentDistance * c1.weight;
+        //    p0 = v1;
+
+        //    var n2 = Vector3.Normalize(GetIdealTangentVector(v3, v2, v1));
+        //    p2 = v2 + n2 * segmentDistance * c2.weight;
+        //    p3 = v2;
+
+        //    //float t = time * .33f + .33f;
+        //    float t = time;
+        //    float t2 = t * t;
+        //    float t3 = t2 * t;
+        //    float i = 1f - t;
+        //    float i2 = i * i;
+        //    float i3 = i2 * i;
+
+        //    Vector3 result =
+        //        (i3) * 1f * p0 +
+        //        (i2 * t) * 3f * p1 +
+        //        (i * t2) * 3f * p2 +
+        //        (t3) * 1f * p3;
+
+        //    //artificialCpLine.Add(p0);  // visualization stuff.
+        //    //artificialCpLine.Add(p1);
+        //    //artificialCpLine.Add(p2);
+        //    //artificialCpLine.Add(p3);
+
+        //    return result;
+        //}
+
+        //public Vector3 GetIdealTangentVector(Vector3 a, Vector3 b, Vector3 c)
+        //{
+        //    float disa = Vector3.Distance(a, b);
+        //    float disc = Vector3.Distance(b, c);
+        //    float ratioa = disa / (disa + disc);
+        //    var pAB = ((b - a) * ratioa) + a;
+        //    var pBC = ((c - b) * ratioa) + b;
+        //    var result = pBC - pAB;
+        //    // prevent nan later on.
+        //    if (result == Vector3.Zero)
+        //        result = c - a;
+
+        //    //artificialTangentLine.Add(pAB); // visualization stuff.
+        //    //artificialTangentLine.Add(pBC);
+
+        //    return result;
+        //}
+
+
+        //int GetCpIndex(int x, int y)
+        //{
+        //    return y * cpWidth + x;
+        //}
+        //Point GetCpIndexXy(int index)
+        //{
+        //    int y = (int)(index / cpWidth);
+        //    int x = index - y * cpWidth;
+        //    return new Point(x, y);
+        //}
+
+        //int GetCurveIndex(int x, int y)
+        //{
+        //    return y * _numOfCurvatureSegmentPoints + x;
+        //}
+        //Point GetCurveIndexXY(int index)
+        //{
+        //    int y = (int)(index / _numOfCurvatureSegmentPoints);
+        //    int x = index - y * _numOfCurvatureSegmentPoints;
+        //    return new Point(x, y);
+        //}
+
+
+
+        //#endregion
 
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // supporting class.
@@ -344,6 +363,13 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             {
                 return yListOfRows[y].xRowItems[x];
             }
+
+            public void SetCp(ControlPoint cp, int index)
+            {
+               var p = GetCpIndexXy(index);
+                SetCp(cp, p.X, p.Y);
+            }
+
             public void SetCp(ControlPoint cp, int x, int y)
             {
                 while (y >= yListOfRows.Count)
@@ -353,19 +379,27 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 // set
                 yListOfRows[y].xRowItems[x] = cp;
             }
-            void WrapIndex(ref int x, ref int y)
+
+            int WrapCpIndexXy(ref int x, ref int y)
             {
                 if (x >= cpWidth)
                     x = x - cpWidth;
+                if (x < 0)
+                    x = x + cpWidth;
                 if (y >= cpHeight)
                     y = y - cpHeight;
+                if (y <0)
+                    y = y + cpHeight;
+                int index = y * cpWidth + x;
+                return index;
             }
 
             int GetCpIndex(int x, int y)
             {
                 return y * cpWidth + x;
             }
-            Point GetCpIndexXY(int index)
+
+            Point GetCpIndexXy(int index)
             {
                 int y = (int)(index / cpWidth);
                 int x = index - y * cpWidth;
