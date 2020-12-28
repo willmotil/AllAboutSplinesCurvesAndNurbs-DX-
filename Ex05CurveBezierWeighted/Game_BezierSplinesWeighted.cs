@@ -16,7 +16,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         public static Texture2D _dot;
         MouseState ms;
         public int currentScrollWheelvalue = 0;
-        CurveBezierSplineWeighted curve;
+        Curve_BezierSplineWeighted curve;
         int numOfPoints = 100;
         float selectedWeight = 1f;
         int selectedCp = 0;
@@ -70,7 +70,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("MgGenFont");
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
-            curve = new CurveBezierSplineWeighted(_wayPoints, 0.5f, isCurveClosed);
+            curve = new Curve_BezierSplineWeighted(_wayPoints, 0.5f, isCurveClosed);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
         }
 
@@ -132,7 +132,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 CheckPointSelected();
 
             if (redoCurve)
-                curve = new CurveBezierSplineWeighted(_wayPoints, isCurveClosed);
+                curve = new Curve_BezierSplineWeighted(_wayPoints, isCurveClosed);
 
             string msg2 = "Open";
             if(isCurveClosed)

@@ -30,7 +30,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
     ///
     /// 
     /// </summary>
-    public class CurveBezier06RecalculatingCps
+    public class Curve_BezierRecalculatingCps
     {
         public bool _showTangents = false;
 
@@ -91,14 +91,14 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         /// <summary>
         /// </summary>
-        public CurveBezier06RecalculatingCps(Vector4[] controlPoints)
+        public Curve_BezierRecalculatingCps(Vector4[] controlPoints)
         {
             CreateSpline(controlPoints);
         }
 
         /// <summary>
         /// </summary>
-        public CurveBezier06RecalculatingCps(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve)
+        public Curve_BezierRecalculatingCps(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve)
         {
             _closedControlPoints = closedControlPoints;
             _uniformedCurve = uniformedCurve;
@@ -109,7 +109,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// 
         /// </summary>
-        public CurveBezier06RecalculatingCps(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve, float globalWeight, bool showTangents)
+        public Curve_BezierRecalculatingCps(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve, float globalWeight, bool showTangents)
         {
             _closedControlPoints = closedControlPoints;
             _uniformedCurve = uniformedCurve;

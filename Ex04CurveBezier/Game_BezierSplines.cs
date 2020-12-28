@@ -39,7 +39,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         //    new Vector3(80, 0, -5) + _wpOffset, new Vector3(0, -80, -5) + _wpOffset, new Vector3(-80, 0, -5) + _wpOffset, new Vector3(0, 80, -5) + _wpOffset,
         //};
 
-        CurveBezierSpline cspline;
+        Curve_BezierSpline cspline;
 
         int numOfPoints = 40;
         float weight = 0f;
@@ -82,7 +82,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _camera.MovementSpeedPerSecond = 3f;
             _camera.SetWayPoints(_wayPoints, true, 100);
 
-            cspline = new CurveBezierSpline(_wayPoints, true, 0.5f);
+            cspline = new Curve_BezierSpline(_wayPoints, true, 0.5f);
         }
 
 
@@ -142,7 +142,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
             if (redoCurve)
             {
-                cspline = new CurveBezierSpline(_wayPoints, true, weight);
+                cspline = new Curve_BezierSpline(_wayPoints, true, weight);
             }
 
             msg =

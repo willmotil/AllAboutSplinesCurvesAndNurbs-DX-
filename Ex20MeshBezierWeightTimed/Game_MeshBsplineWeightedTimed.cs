@@ -16,10 +16,10 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         public static Texture2D _dot;
         MouseState ms;
 
-        MeshBsplineWeightedTimed curve;
+        Mesh_BsplineWeightedTimed mesh;
         float maxSelectableWeight = 9f;
         float selectedWeight = 1f;
-        int numOfPoints = 50;
+        int numOfPoints = 40;
         int selectedCp = 0;
         bool isCurveClosed = false;
         bool isUniformedUsed = true;
@@ -35,12 +35,16 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         static Vector4 _wpOffset = new Vector4(350, 240, +5, 0);
 
-        Vector4[] _wayPoints = new Vector4[]
+        int cpWidth = 4;
+        int cpHeight = 6;
+        Vector4[] meshPoints = new Vector4[]
         {
-             new Vector4(100, 200,  0, 1f) , new Vector4(200, 200,  0, 1f) , new Vector4(400, 200,  0, 1f) , new Vector4(500, 200,  0, 1f) ,
-             new Vector4(100, 300,  0, 1f) , new Vector4(200, 300,  0, 1f) , new Vector4(400, 300,  0, 1f) , new Vector4(500, 300,  0, 1f) ,
-             new Vector4(100, 400,  0, 1f) , new Vector4(200, 400,  0, 1f) , new Vector4(400, 400,  0, 1f) , new Vector4(500, 400,  0, 1f) ,
-             new Vector4(100, 500,  0, 1f) , new Vector4(200, 500,  0, 1f) , new Vector4(400, 500,  0, 1f) , new Vector4(500, 500,  0, 1f)
+             new Vector4(100, 200,  0, 1f) , new Vector4(300, 200,  0, 1f) , new Vector4(500, 200,  0, 1f) , new Vector4(700, 200,  0, 1f) ,
+             new Vector4(100, 300,  0, 1f) , new Vector4(300, 300,  0, 1f) , new Vector4(500, 300,  0, 1f) , new Vector4(700, 300,  0, 1f) ,
+             new Vector4(100, 400,  0, 1f) , new Vector4(300, 400,  0, 1f) , new Vector4(500, 400,  0, 1f) , new Vector4(700, 400,  0, 1f) ,
+             new Vector4(100, 500,  0, 1f) , new Vector4(300, 500,  0, 1f) , new Vector4(500, 500,  0, 1f) , new Vector4(700, 500,  0, 1f),
+             new Vector4(100, 600,  0, 1f) , new Vector4(300, 600,  0, 1f) , new Vector4(500, 600,  0, 1f) , new Vector4(700, 600,  0, 1f),
+             new Vector4(100, 700,  0, 1f) , new Vector4(300, 700,  0, 1f) , new Vector4(500, 700,  0, 1f) , new Vector4(700, 700,  0, 1f)
         };
 
 
@@ -69,7 +73,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
 
-            curve = new MeshBsplineWeightedTimed(_wayPoints, 4, 4, numOfPoints, isCurveClosed, isUniformedUsed);
+            mesh = new Mesh_BsplineWeightedTimed(meshPoints, cpWidth, cpHeight, numOfPoints, isCurveClosed, isUniformedUsed);
         }
 
         protected override void Update(GameTime gameTime)
@@ -109,7 +113,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 selectedWeight += .05f;
                 if (selectedWeight > maxSelectableWeight)
                     selectedWeight = -1f;
-                _wayPoints[selectedCp].W = selectedWeight;
+                meshPoints[selectedCp].W = selectedWeight;
                 currentScrollWheelvalueForWeight = ms.ScrollWheelValue;
                 redoCurve = true;
             }
@@ -120,7 +124,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 selectedWeight -= .05f;
                 if (selectedWeight < -1f)
                     selectedWeight = maxSelectableWeight;
-                _wayPoints[selectedCp].W = selectedWeight;
+                meshPoints[selectedCp].W = selectedWeight;
                 currentScrollWheelvalueForWeight = ms.ScrollWheelValue;
                 redoCurve = true;
             }
@@ -128,16 +132,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             // adjust control point position.
             if (ms.LeftButton == ButtonState.Pressed)
             {
-                _wayPoints[selectedCp] = new Vector4(ms.Position.X, ms.Position.Y, 0, _wayPoints[selectedCp].W);
+                meshPoints[selectedCp] = new Vector4(ms.Position.X, ms.Position.Y, 0, meshPoints[selectedCp].W);
                 redoCurve = true;
-            }
-
-            // next control point
-            if (IsPressedWithDelay(Keys.Right, gameTime))
-            {
-                selectedCp += 1;
-                if (selectedCp > _wayPoints.Length - 1)
-                    selectedCp = 0;
             }
 
             // select a control point.
@@ -145,7 +141,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 CheckPointSelected();
 
             if (redoCurve)
-                curve = new MeshBsplineWeightedTimed(_wayPoints , 4 , 4 , numOfPoints, isCurveClosed, isUniformedUsed);
+                mesh = new Mesh_BsplineWeightedTimed(meshPoints, cpWidth, cpHeight, numOfPoints, isCurveClosed, isUniformedUsed);
 
             string msg2 = "Open";
             if (isCurveClosed)
@@ -183,8 +179,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         {
             int size = 10;
             var checkedRect = new Rectangle(ms.Position.X - size / 2, ms.Position.Y - size / 2, size, size);
-            for (int i = 0; i < _wayPoints.Length; i++)
-                if (checkedRect.Contains(new Vector2(_wayPoints[i].X, _wayPoints[i].Y)))
+            for (int i = 0; i < meshPoints.Length; i++)
+                if (checkedRect.Contains(new Vector2(meshPoints[i].X, meshPoints[i].Y)))
                     selectedCp = i;
         }
 
@@ -193,7 +189,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-            //curve.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
+            mesh.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
             DrawHelpers.DrawCrossHair(positionAtCycledTime.ToVector2(), 5, Color.White);
             _spriteBatch.DrawString(_font, msg, new Vector2(10, 5), Color.White);
             _spriteBatch.End();

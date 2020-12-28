@@ -14,7 +14,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
     ///  This is also important for uv calculations to smoothly map texture positions upon meshes that we will later generate from these curves in another example.
     ///  So this example is all about uniformity which is a important quality that doesn't come for free from this type of piecewise spline... well have to do more work to get it.
     /// </summary>
-    public class CurveBezierSplineWeightedTimed
+    public class Curve_BezierSplineWeightedTimed
     {
         public bool _showTangents = false;
 
@@ -75,14 +75,14 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
         /// <summary>
         /// </summary>
-        public CurveBezierSplineWeightedTimed(Vector4[] controlPoints)
+        public Curve_BezierSplineWeightedTimed(Vector4[] controlPoints)
         {
             CreateSpline(controlPoints);
         }
 
         /// <summary>
         /// </summary>
-        public CurveBezierSplineWeightedTimed(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve)
+        public Curve_BezierSplineWeightedTimed(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve)
         {
             _closedControlPoints = closedControlPoints;
             _uniformedCurve = uniformedCurve;
@@ -93,7 +93,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// 
         /// </summary>
-        public CurveBezierSplineWeightedTimed(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve, float globalWeight, bool showTangents)
+        public Curve_BezierSplineWeightedTimed(Vector4[] controlPoints, int numOfVisualCurvatureSegmentPoints, bool closedControlPoints, bool uniformedCurve, float globalWeight, bool showTangents)
         {
             _closedControlPoints = closedControlPoints;
             _uniformedCurve = uniformedCurve;

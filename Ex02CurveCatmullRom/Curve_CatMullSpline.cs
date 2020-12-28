@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
-    public class CurveCatMullSpline
+    public class Curve_CatMullSpline
     {
 
         Vector3[] cp;
@@ -16,7 +16,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         private float _weight = 0.5f;
 
 
-        public CurveCatMullSpline(Vector3[] controlPoints, bool useWikiVersion)
+        public Curve_CatMullSpline(Vector3[] controlPoints, bool useWikiVersion)
         {
             CreateSpline(controlPoints, useWikiVersion);
         }
@@ -24,7 +24,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// Weight is the Parametric constant: 0.0 for the uniform spline, 0.5 for the centripetal spline, 1.0 for the chordal spline
         /// </summary>
-        public CurveCatMullSpline(Vector3[] controlPoints, bool useWikiVersion, float weight)
+        public Curve_CatMullSpline(Vector3[] controlPoints, bool useWikiVersion, float weight)
         {
             _weight = weight;
             CreateSpline( controlPoints, useWikiVersion);
@@ -33,7 +33,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// Weight is the Parametric constant: 0.0 for the uniform spline, 0.5 for the centripetal spline, 1.0 for the chordal spline
         /// </summary>
-        public CurveCatMullSpline(Vector3[] controlPoints, bool useWikiVersion, float weight, int numOfVisualCurvatureSegmentPoints)
+        public Curve_CatMullSpline(Vector3[] controlPoints, bool useWikiVersion, float weight, int numOfVisualCurvatureSegmentPoints)
         {
             _weight = weight;
             _numOfVisualCurvatureSegmentPoints = numOfVisualCurvatureSegmentPoints;

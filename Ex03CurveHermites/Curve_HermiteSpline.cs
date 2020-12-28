@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
-    public class CurveHermiteSpline
+    public class Curve_HermiteSpline
     {
 
 
@@ -19,7 +19,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         private float _weight = 0.5f;
         List<Vector3> artificialCpLine = new List<Vector3>();
 
-        public CurveHermiteSpline(Vector3[] controlPoints, bool useWikiVersion)
+        public Curve_HermiteSpline(Vector3[] controlPoints, bool useWikiVersion)
         {
             CreateSpline(controlPoints, useWikiVersion);
         }
@@ -27,7 +27,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// Weight is the Parametric constant: 0.0 for the uniform spline, 0.5 for the centripetal spline, 1.0 for the chordal spline
         /// </summary>
-        public CurveHermiteSpline(Vector3[] controlPoints, bool useWikiVersion, float weight)
+        public Curve_HermiteSpline(Vector3[] controlPoints, bool useWikiVersion, float weight)
         {
             _weight = weight;
             CreateSpline(controlPoints, useWikiVersion);
@@ -36,7 +36,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         /// <summary>
         /// Weight is the Parametric constant: 0.0 for the uniform spline, 0.5 for the centripetal spline, 1.0 for the chordal spline
         /// </summary>
-        public CurveHermiteSpline(Vector3[] controlPoints, bool useWikiVersion, float weight, int numOfVisualCurvatureSegmentPoints)
+        public Curve_HermiteSpline(Vector3[] controlPoints, bool useWikiVersion, float weight, int numOfVisualCurvatureSegmentPoints)
         {
             _weight = weight;
             _numOfVisualCurvatureSegmentPoints = numOfVisualCurvatureSegmentPoints;

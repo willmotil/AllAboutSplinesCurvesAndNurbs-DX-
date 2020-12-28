@@ -8,7 +8,7 @@ using System.Threading;
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
 
-    public class Game_Bezier06RecalculatingCps : Game
+    public class Game_BezierRecalculatingCps : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -17,7 +17,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         MouseState ms;
 
         public int currentScrollWheelvalue = 0;
-        CurveBezier06RecalculatingCps curve;
+        Curve_BezierRecalculatingCps curve;
         float maxSelectableWeight = 9f;
         float selectedWeight = 1f;
         int numOfPoints = 50;
@@ -58,7 +58,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         };
 
 
-        public Game_Bezier06RecalculatingCps()
+        public Game_BezierRecalculatingCps()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -83,7 +83,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
 
-            curve = new CurveBezier06RecalculatingCps(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+            curve = new Curve_BezierRecalculatingCps(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
             curve._showTangents = showGeneratedTangentsPositions;
         }
 
@@ -159,7 +159,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             CheckPointSelected();
 
             if (redoCurve)
-                curve = new CurveBezier06RecalculatingCps(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+                curve = new Curve_BezierRecalculatingCps(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
 
             string msg2 = "Open";
             if (isCurveClosed)

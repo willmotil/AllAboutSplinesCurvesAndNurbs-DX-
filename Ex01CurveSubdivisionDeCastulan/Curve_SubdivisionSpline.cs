@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework
 {
-    public class CurveSubdivisionSpline
+    public class Curve_SubdivisionSpline
     {
         Vector4[] cp;
 
         public Vector4[] solved = new Vector4[10] { new Vector4(), new Vector4(), new Vector4(), new Vector4(), new Vector4(), new Vector4(), new Vector4(), new Vector4(), new Vector4(), new Vector4()};
 
-        public CurveSubdivisionSpline(Vector3[] controlPoints)
+        public Curve_SubdivisionSpline(Vector3[] controlPoints)
         {
             cp = new Vector4[controlPoints.Length];
             for (int i = 0; i < controlPoints.Length; i++)

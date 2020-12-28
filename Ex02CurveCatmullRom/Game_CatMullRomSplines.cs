@@ -35,7 +35,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
         };
 
-        CurveCatMullSpline cspline;
+        Curve_CatMullSpline cspline;
 
         int numOfPoints = 40;
         float weight = 0f;
@@ -79,7 +79,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _camera.SetWayPoints(_wayPoints, true, 100);
 
             //cspline = new CatMullSpline(_wayPoints);
-            cspline = new CurveCatMullSpline(_wayPoints, true, 0.5f);
+            cspline = new Curve_CatMullSpline(_wayPoints, true, 0.5f);
         }
 
 
@@ -110,14 +110,14 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 weight += .01f;
                 if (weight > 2f)
                     weight = 0f;
-                cspline = new CurveCatMullSpline(_wayPoints, true, weight);
+                cspline = new Curve_CatMullSpline(_wayPoints, true, weight);
             }
 
                 ms = Mouse.GetState();
             if (ms.LeftButton == ButtonState.Pressed)
             {
                 _wayPoints[0] = new Vector3(ms.Position.X, ms.Position.Y, 0);
-                cspline = new CurveCatMullSpline(_wayPoints, true, weight);
+                cspline = new Curve_CatMullSpline(_wayPoints, true, weight);
             }
 
             msg = $"weight " + weight;

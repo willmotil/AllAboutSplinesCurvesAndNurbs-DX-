@@ -38,7 +38,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             new Vector3(80, 80, -5) + _wpOffset, new Vector3(80, -80, -5) + _wpOffset, new Vector3(-80, -80, -5) + _wpOffset, new Vector3(-80, 80, -5) + _wpOffset,
         };
 
-        CurveHermiteSpline cspline;
+        Curve_HermiteSpline cspline;
 
         int numOfPoints = 40;
         float weight = 0f;
@@ -81,7 +81,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _camera.MovementSpeedPerSecond = 3f;
             _camera.SetWayPoints(_wayPoints, true, 100);
 
-            cspline = new CurveHermiteSpline(_wayPoints, true, 0.5f);
+            cspline = new Curve_HermiteSpline(_wayPoints, true, 0.5f);
         }
 
 
@@ -141,7 +141,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
             if (redoCurve)
             {
-                cspline = new CurveHermiteSpline(_wayPoints, true, weight);
+                cspline = new Curve_HermiteSpline(_wayPoints, true, weight);
             }
 
             msg = 

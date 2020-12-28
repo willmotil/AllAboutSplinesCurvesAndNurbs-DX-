@@ -27,7 +27,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             new Vector3(120, 120, -5) + _wpOffset, new Vector3(120, -120, -5) + _wpOffset, new Vector3(-120, -120, -5) + _wpOffset, new Vector3(-120, 120, -5) + _wpOffset,
         };
 
-        CurveSubdivisionSpline bspline;
+        Curve_SubdivisionSpline bspline;
 
         Vector3[] bezierCurveLines;
 
@@ -70,7 +70,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _camera.MovementSpeedPerSecond = 3f;
             _camera.SetWayPoints(_wayPoints, true, 100);
 
-            bspline = new CurveSubdivisionSpline(_wayPoints);
+            bspline = new Curve_SubdivisionSpline(_wayPoints);
             bezierCurveLines = new Vector3[20];
             for (int i =0; i < 20; i++)
             {

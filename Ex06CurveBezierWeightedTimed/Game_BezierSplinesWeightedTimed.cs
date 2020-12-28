@@ -19,7 +19,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         MouseState ms;
 
         public int currentScrollWheelvalue = 0;
-        CurveBezierSplineWeightedTimed curve;
+        Curve_BezierSplineWeightedTimed curve;
         float maxSelectableWeight = 9f;
         float selectedWeight = 1f;
         int numOfPoints = 50;
@@ -83,7 +83,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
 
-            curve = new CurveBezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+            curve = new Curve_BezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
             curve._showTangents = showGeneratedTangentsPositions;
         }
 
@@ -160,7 +160,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 CheckPointSelected();
 
             if (redoCurve)
-                    curve = new CurveBezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+                    curve = new Curve_BezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
 
             string msg2 = "Open";
             if (isCurveClosed)
