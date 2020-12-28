@@ -108,4 +108,3 @@ C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netc
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).dll
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).pdb
 C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).genruntimeconfig.cache
-C:\Users\will\MainFiles\GitPrjs\AllAboutSplinesCurvesAndNurbs(DX)\obj\Debug\netcoreapp3.1\AllAboutSplinesCurvesAndNurbs(DX).csprojAssemblyReference.cache
