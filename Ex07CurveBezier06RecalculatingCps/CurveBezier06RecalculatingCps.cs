@@ -13,6 +13,22 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
     ///  However this will allow for a smooth uniform distribution of points along the curve so that the speed of traversal is constant about it.
     ///  This is also important for uv calculations to smoothly map texture positions upon meshes that we will later generate from these curves in another example.
     ///  So this example is all about uniformity which is a important quality that doesn't come for free from this type of piecewise spline... well have to do more work to get it.
+    ///  
+    /// 
+    /// Ok so the objective now is....
+    ///
+    /// Get the weight in the uniformed point returning function since i have already integrated before that...
+    /// it maybe good enough to use the distance ratio to interpolate the weight.
+    /// 
+    /// if so that will save a huge amount of otherwise expensiveeeeeee   calculations ....
+    /// 
+    /// so the first objective is to test that which means...
+    /// returning instead of a vector3 list of points a vector4 pos + weight list this time.
+    /// from their i can in the same manner work out the secondary time dimension interpolation without creating some big as ugly structure ... 
+    /// 
+    /// lets give it a shot.
+    ///
+    /// 
     /// </summary>
     public class CurveBezier06RecalculatingCps
     {
@@ -134,7 +150,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 for (int i = 0; i < loopCount; i++)
                 {
                     float t = (float)(i) / (float)(divisor);
-                    curveLinePoints[i] = GetUniformSplinePoint(t);
+                    curveLinePoints[i] = ToVector3(GetUniformSplinePoint(t));
                 }
             }
             else
@@ -142,7 +158,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 for (int i = 0; i < loopCount; i++)
                 {
                     float t = (float)(i) / (float)(divisor);
-                    curveLinePoints[i] = GetNonUniformSplinePoint(t);
+                    curveLinePoints[i] = ToVector3(GetNonUniformSplinePoint(t));
                 }
             }
         }
@@ -162,7 +178,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 float cpToNextCpDistance = 0;
                 for (float time = 0f; time < integrateStepAmount + 000001f; time += integrateStepAmount)
                 {
-                    var nowPosition = DetermineSplines(cptomeasure, time);
+                    var nowPosition = DetermineSplinesAndGetPointOnCurve(cptomeasure, time); // what we get here is the raw tangental splined point by the polynominal.
                     if (time > 0f)
                     {
                         var dist = Vector3.Distance(nowPosition, lastPos);
@@ -183,10 +199,35 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             }
         }
 
-        public Vector3 GetUniformSplinePoint(float time)
+        public Vector4 GetNonUniformSplinePoint(float Time)
         {
             int resultIndex = 0;
-            float fracTime = 0;
+            float fractionalTime = 0;
+            if (_closedControlPoints)
+            {
+                var plotRange = cps.Length;
+                var offset = plotRange * Time;
+                resultIndex = (int)(offset);
+                fractionalTime = offset - (float)resultIndex;
+            }
+            else
+            {
+                var plotRange = cps.Length - 1;
+                var offset = plotRange * Time;
+                resultIndex = (int)(offset);
+                fractionalTime = offset - (float)resultIndex;
+            }
+            //return DetermineSplinesAndGetPointOnCurve(index, fractionalTime);
+            var p = DetermineSplinesAndGetPointOnCurve(resultIndex, fractionalTime);
+            var w = (cps[index2].weight - cps[index1].weight) * fractionalTime + cps[index1].weight;
+            Vector4 result = new Vector4(p.X, p.Y, p.Z, w);
+            return result;
+        }
+
+        public Vector4 GetUniformSplinePoint(float time)
+        {
+            int resultIndex = 0;
+            float fractionalTime = 0;
             float currentDistance = time * totaldist;
             if (_closedControlPoints)
             {
@@ -199,9 +240,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     {
                         resultIndex = i;
                         var len = end - start;
-                        fracTime = (currentDistance - start) / len;
-                        if (fracTime > 1f)
-                            fracTime = 1f;
+                        fractionalTime = (currentDistance - start) / len;
+                        if (fractionalTime > 1f)
+                            fractionalTime = 1f;
                         i = cps.Length; // break
                     }
                     i++;
@@ -218,38 +259,22 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     {
                         resultIndex = i;
                         var len = end - start;
-                        fracTime = (currentDistance - start) / len;
-                        if (fracTime > 1f)
-                            fracTime = 1f;
+                        fractionalTime = (currentDistance - start) / len;
+                        if (fractionalTime > 1f)
+                            fractionalTime = 1f;
                         i = cps.Length; // break
                     }
                     i++;
                 }
             }
-            return DetermineSplines(resultIndex, fracTime);
+            //var result = DetermineSplinesAndGetPointOnCurve(resultIndex, fracTime);
+            var p = DetermineSplinesAndGetPointOnCurve(resultIndex, fractionalTime);
+            var w = (cps[index2].weight - cps[index1].weight) * fractionalTime + cps[index1].weight;
+            Vector4 result = new Vector4(p.X, p.Y, p.Z, w);
+            return result;
         }
 
-        public Vector3 GetNonUniformSplinePoint(float Time)
-        {
-            if (_closedControlPoints)
-            {
-                var plotRange = cps.Length;
-                var offset = plotRange * Time;
-                var index = (int)(offset);
-                var fractionalTime = offset - (float)index;
-                return DetermineSplines(index, fractionalTime);
-            }
-            else
-            {
-                var plotRange = cps.Length - 1;
-                var offset = plotRange * Time;
-                var index = (int)(offset);
-                var fractionalTime = offset - (float)index;
-                return DetermineSplines(index, fractionalTime);
-            }
-        }
-
-        private Vector3 DetermineSplines(int cpIndex, float fracTime)
+        private Vector3 DetermineSplinesAndGetPointOnCurve(int cpIndex, float fracTime)
         {
             if (_closedControlPoints || (cpIndex > 0 && cpIndex < cps.Length - 2))
             {
@@ -277,9 +302,8 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 }
             }
             currentCpIndex = index1;
-            return WeightedPoint(cps[index0].position, cps[index1].position, cps[index2].position, cps[index3].position, fracTime);
+            return GetSegmentsTangentalWeightedPoint(cps[index0].position, cps[index1].position, cps[index2].position, cps[index3].position, fracTime);
         }
-
         public int EnsureIndexInRange(int i)
         {
             while (i < 0)
@@ -289,12 +313,11 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             return i;
         }
 
-
         /// <summary>
-        /// Here we go this one is only for closed curves open ones are easy just append the end points to the control point list
+        /// Here we go.
         /// </summary>
         /// <returns></returns>
-        public Vector3 WeightedPoint(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, float time)
+        private Vector3 GetSegmentsTangentalWeightedPoint(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, float time)
         {
             Vector3 p0 = v0; Vector3 p1 = v1; Vector3 p2 = v2; Vector3 p3 = v3;
 
@@ -400,7 +423,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 else
                     DrawHelpers.DrawBasicLine(ToVector2(curveLinePoints[i]), ToVector2(curveLinePoints[i + 1]), lineThickness, Color.Black);
 
-                if (i < 2)
+                if (i < 1)
                     DrawHelpers.DrawBasicLine(ToVector2(curveLinePoints[i]), ToVector2(curveLinePoints[i + 1]), lineThickness, Color.Yellow);
 
                 flip = !flip;

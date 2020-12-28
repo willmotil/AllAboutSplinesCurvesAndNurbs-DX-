@@ -162,7 +162,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 float cpToNextCpDistance = 0;
                 for(float time =0f; time < integrateStepAmount + 000001f; time += integrateStepAmount)
                 {
-                    var nowPosition = DetermineSplines(cptomeasure, time);
+                    var nowPosition = DetermineSplinesAndGetPointOnCurve(cptomeasure, time);
                     if(time>0f)
                     {
                         var dist = Vector3.Distance(nowPosition, lastPos);
@@ -186,7 +186,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         public Vector3 GetUniformSplinePoint(float time)
         {
             int resultIndex = 0;
-            float fracTime = 0;
+            float fractionalTime = 0;
             float currentDistance = time * totaldist;
             if (_closedControlPoints)
             {
@@ -199,9 +199,9 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     {
                         resultIndex = i;
                         var len = end - start;
-                        fracTime = (currentDistance - start) / len;
-                        if (fracTime > 1f)
-                           fracTime = 1f;
+                        fractionalTime = (currentDistance - start) / len;
+                        if (fractionalTime > 1f)
+                           fractionalTime = 1f;
                         i = cps.Length; // break
                     }
                     i++;
@@ -218,38 +218,40 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     {
                         resultIndex = i;
                         var len = end - start;
-                        fracTime = (currentDistance - start) / len;
-                        if (fracTime > 1f)
-                            fracTime = 1f;
+                        fractionalTime = (currentDistance - start) / len;
+                        if (fractionalTime > 1f)
+                            fractionalTime = 1f;
                         i = cps.Length; // break
                     }
                     i++;
                 }
             }
-            return DetermineSplines(resultIndex, fracTime);
+            return DetermineSplinesAndGetPointOnCurve(resultIndex, fractionalTime);
         }
 
         public Vector3 GetNonUniformSplinePoint(float Time)
         {
+            int resultIndex = 0;
+            float fractionalTime = 0;
             if (_closedControlPoints)
             {
                 var plotRange = cps.Length;
                 var offset = plotRange * Time;
-                var index = (int)(offset);
-                var fractionalTime = offset - (float)index;
-                return DetermineSplines(index, fractionalTime);
+                resultIndex = (int)(offset);
+                fractionalTime = offset - (float)resultIndex;
             }
             else
             {
                 var plotRange = cps.Length - 1;
                 var offset = plotRange * Time;
-                var index = (int)(offset);
-                var fractionalTime = offset - (float)index;
-                return DetermineSplines(index, fractionalTime);
+                resultIndex = (int)(offset);
+                fractionalTime = offset - (float)resultIndex;
             }
+            var result = DetermineSplinesAndGetPointOnCurve(resultIndex, fractionalTime);
+            return result;
         }
 
-        private Vector3 DetermineSplines(int cpIndex, float fracTime)
+        private Vector3 DetermineSplinesAndGetPointOnCurve(int cpIndex, float fractionalTime)
         {
             if (_closedControlPoints || (cpIndex > 0 && cpIndex < cps.Length - 2))
             {
@@ -277,7 +279,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 }
             }
             currentCpIndex = index1;
-            return WeightedPoint(cps[index0].position, cps[index1].position, cps[index2].position, cps[index3].position, fracTime);
+            return WeightedPoint(cps[index0].position, cps[index1].position, cps[index2].position, cps[index3].position, fractionalTime);
         }
 
         public int EnsureIndexInRange(int i)

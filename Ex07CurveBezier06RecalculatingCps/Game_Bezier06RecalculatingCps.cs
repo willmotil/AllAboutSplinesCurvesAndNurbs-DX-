@@ -17,17 +17,19 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         MouseState ms;
 
         public int currentScrollWheelvalue = 0;
-        CurveBezierSplineWeightedTimed curve;
+        CurveBezier06RecalculatingCps curve;
         float maxSelectableWeight = 9f;
         float selectedWeight = 1f;
         int numOfPoints = 50;
         int selectedCp = 0;
+        bool isMouseNearCp = false;
+        int mouseNearCpNumber = 0;
         bool isCurveClosed = false;
         bool isUniformedUsed = true;
         bool showGeneratedTangentsPositions = false;
         float cycledTime = 0f;
         float gameTimeInSeconds = 0;
-        Vector3 positionAtCycledTime = Vector3.Zero;
+        Vector4 positionWeightAtCycledTime = Vector4.Zero;
         string msg =
               $" " + "\n" +
               $" " + "\n"
@@ -81,7 +83,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
 
-            curve = new CurveBezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+            curve = new CurveBezier06RecalculatingCps(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
             curve._showTangents = showGeneratedTangentsPositions;
         }
 
@@ -153,12 +155,11 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                     selectedCp = 0;
             }
 
-            // select a control point.
-            if (ms.RightButton == ButtonState.Pressed)
-                CheckPointSelected();
+            // check or select a control point.
+            CheckPointSelected();
 
             if (redoCurve)
-                curve = new CurveBezierSplineWeightedTimed(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
+                curve = new CurveBezier06RecalculatingCps(_wayPoints, numOfPoints, isCurveClosed, isUniformedUsed);
 
             string msg2 = "Open";
             if (isCurveClosed)
@@ -188,18 +189,26 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
                 cycledTime = 0;
             gameTimeInSeconds += elapsed;
             if (isUniformedUsed)
-                positionAtCycledTime = curve.GetUniformSplinePoint(cycledTime);
+                positionWeightAtCycledTime = curve.GetUniformSplinePoint(cycledTime);
             else
-                positionAtCycledTime = curve.GetNonUniformSplinePoint(cycledTime);
+                positionWeightAtCycledTime = curve.GetNonUniformSplinePoint(cycledTime);
         }
 
         public void CheckPointSelected()
         {
             int size = 10;
             var checkedRect = new Rectangle(ms.Position.X - size / 2, ms.Position.Y - size / 2, size, size);
+            isMouseNearCp = false;
             for (int i = 0; i < _wayPoints.Length; i++)
+            {
                 if (checkedRect.Contains(new Vector2(_wayPoints[i].X, _wayPoints[i].Y)))
-                    selectedCp = i;
+                {
+                    isMouseNearCp = true;
+                    mouseNearCpNumber = i;
+                    if (ms.RightButton == ButtonState.Pressed)
+                        selectedCp = i;
+                }
+            }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -207,9 +216,23 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
+
             curve.DrawWithSpriteBatch(_spriteBatch, _font, gameTime);
-            DrawHelpers.DrawCrossHair(positionAtCycledTime.ToVector2(), 5, Color.White);
+
+            if (isMouseNearCp)
+            {
+                var col = Color.Blue;
+                if(selectedCp == mouseNearCpNumber)
+                    col = Color.Red;
+                DrawHelpers.DrawCrossHair(new Vector2(_wayPoints[mouseNearCpNumber].X, _wayPoints[mouseNearCpNumber].Y), 15, col);
+            }
+
+            var p = new Vector2(positionWeightAtCycledTime.X, positionWeightAtCycledTime.Y);
+            DrawHelpers.DrawCrossHair(p, 5, Color.White);
+            _spriteBatch.DrawString(_font, $" pos X:{p.X.ToString("###0.00")}, Y:{p.Y.ToString("###0.00")}\n weight: {positionWeightAtCycledTime.W.ToString("####0.000")}", p + new Vector2(0, 20), Color.White);
+
             _spriteBatch.DrawString(_font, msg, new Vector2(10, 5), Color.White);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
