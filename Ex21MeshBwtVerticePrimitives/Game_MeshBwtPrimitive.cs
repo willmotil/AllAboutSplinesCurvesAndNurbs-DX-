@@ -1,4 +1,5 @@
 ﻿
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,7 +9,7 @@ using System.Threading;
 namespace AllAboutSplinesCurvesAndNurbs_DX_
 {
 
-    public class Game_MeshBsplineWeightedTimed : Game
+    public class Game_MeshBwtPrimitive : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -16,10 +17,11 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         public static Texture2D _dot;
         MouseState ms;
 
-        Mesh_BsplineWeightedTimed mesh;
+        Mesh_BwtPrimitive mesh;
         float maxSelectableWeight = 9f;
         float selectedWeight = 1f;
         int numOfPoints = 40;
+        int numOfIntegrationSteps = 5;
         int selectedCp = 0;
         bool isCurveClosed = false;
         bool isUniformedUsed = true;
@@ -48,7 +50,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
         };
 
 
-        public Game_MeshBsplineWeightedTimed()
+        public Game_MeshBwtPrimitive()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -73,7 +75,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
             _dot = CreateDotTexture(GraphicsDevice, Color.White);
             DrawHelpers.Initialize(GraphicsDevice, _spriteBatch, null);
 
-            mesh = new Mesh_BsplineWeightedTimed(meshPoints, cpWidth, cpHeight, numOfPoints, isCurveClosed, isUniformedUsed);
+            mesh = new Mesh_BwtPrimitive(meshPoints, cpWidth, cpHeight, numOfPoints, isCurveClosed, isUniformedUsed, numOfIntegrationSteps);
         }
 
         protected override void Update(GameTime gameTime)
@@ -145,7 +147,7 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
 
             if (redoCurve)
-                mesh = new Mesh_BsplineWeightedTimed(meshPoints, cpWidth, cpHeight, numOfPoints, isCurveClosed, isUniformedUsed);
+                mesh = new Mesh_BwtPrimitive(meshPoints, cpWidth, cpHeight, numOfPoints, isCurveClosed, isUniformedUsed, numOfIntegrationSteps);
 
             string msg2 = "Open";
             if (isCurveClosed)
@@ -234,5 +236,4 @@ namespace AllAboutSplinesCurvesAndNurbs_DX_
 
     }
 }
-
 
